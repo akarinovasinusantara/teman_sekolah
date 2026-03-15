@@ -15,7 +15,42 @@ import LockIcon from '@mui/icons-material/Lock'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 
-// Data dummy untuk login
+/**
+ * =============================================
+ * HALAMAN LOGIN
+ * =============================================
+ * 
+ * Komponen: Login
+ * File: /frontend/src/pages/Login.jsx
+ * 
+ * Deskripsi:
+ * Halaman login untuk masuk ke sistem Teman Sekolah.
+ * Mendukung 5 role pengguna:
+ * - Super Admin (Yayasan)
+ * - TU (Tata Usaha)
+ * - Guru
+ * - Orang Tua
+ * - Siswa
+ * 
+ * Fitur:
+ * - Form login dengan username & password
+ * - Validasi input
+ * - Redirect berdasarkan role user
+ * - Responsive design (mobile & desktop)
+ * - Notifikasi error jika login gagal
+ * 
+ * Akun Demo (dummy):
+ * | Role        | Username           | Password  |
+ * |-------------|-------------------|-----------|
+ * | super_admin | yayasan_sejahtera | admin123  |
+ * | tu          | tu_admin          | tu123     |
+ * | guru        | guru_budi         | guru123   |
+ * | ortu        | ortu_ahmad        | ortu123   |
+ * | siswa       | siswa_ahmad       | siswa123  |
+ */
+
+// Data dummy untuk simulasi login
+// Catatan: Di production, ini diganti dengan API call ke backend
 const dummyUsers = [
   { user_id: '001', username: 'yayasan_sejahtera', password: 'admin123', role: 'super_admin', nama_lengkap: 'Yayasan Sejahtera' },
   { user_id: '002', username: 'tu_admin', password: 'tu123', role: 'tu', nama_lengkap: 'Staf Tata Usaha' },
@@ -24,36 +59,64 @@ const dummyUsers = [
   { user_id: '005', username: 'siswa_ahmad', password: 'siswa123', role: 'siswa', nama_lengkap: 'Ahmad Rizky' },
 ]
 
+/**
+ * Komponen Login
+ * 
+ * @component
+ * @returns {JSX.Element} Halaman login
+ */
 export default function Login() {
+  // Ambil fungsi login dari AuthContext
   const { login } = useContext(AuthContext)
+  
+  // Hook untuk navigasi setelah login berhasil
   const navigate = useNavigate()
+  
+  // Hook untuk responsive design
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(900))
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  
+  // State management
+  const [username, setUsername] = useState('')        // Input username
+  const [password, setPassword] = useState('')        // Input password
+  const [error, setError] = useState('')              // Error message
+  const [loading, setLoading] = useState(false)       // Loading state
 
+  /**
+   * Handle form submit
+   * 
+   * Proses:
+   * 1. Prevent default form submission
+   * 2. Reset error
+   * 3. Set loading state
+   * 4. Cari user yang cocok (simulasi API call)
+   * 5. Jika ditemukan: login & redirect berdasarkan role
+   * 6. Jika tidak: tampilkan error
+   * 
+   * @param {Event} e - Form submit event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    // Simulasi login dengan data dummy
+    // Simulasi login dengan data dummy (delay 500ms)
     setTimeout(() => {
+      // Cari user yang cocok
       const user = dummyUsers.find(
         (u) => u.username === username && u.password === password
       )
 
       if (user) {
+        // Panggil fungsi login dari context
         login({
           user_id: user.user_id,
           username: user.username,
           role: user.role,
           nama_lengkap: user.nama_lengkap,
         })
-        
-        // Redirect berdasarkan role
+
+        // Redirect berdasarkan role user
         switch (user.role) {
           case 'super_admin':
             navigate('/super-admin')
@@ -74,43 +137,54 @@ export default function Login() {
             navigate('/login')
         }
       } else {
+        // User tidak ditemukan
         setError('Username atau password salah')
       }
       setLoading(false)
     }, 500)
   }
 
+  // Render UI
   return (
     <Box
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: 'linear-gradient(135deg, #1976d2 0%, #9c27b0 100%)',
+        // Background image dengan overlay gradient warna primary
+        backgroundImage: `
+          linear-gradient(135deg, rgba(55, 0, 179, 0.85) 0%, rgba(109, 51, 214, 0.85) 100%),
+          url('/images/backgrounds/sc_bg.jpg')
+        `,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         py: { xs: 4, sm: 0 },
       }}
     >
       <Container maxWidth="sm">
-        <Paper 
-          elevation={isMobile ? 0 : 10} 
-          sx={{ 
-            p: { xs: 3, sm: 4, md: 5 }, 
+        <Paper
+          elevation={isMobile ? 0 : 10}
+          sx={{
+            p: { xs: 3, sm: 4, md: 5 },
             borderRadius: { xs: 0, sm: 2 },
-            ...(isMobile && { bgcolor: 'rgba(255, 255, 255, 0.95)' }),
+            bgcolor: '#ffffff',
+            ...(isMobile && { bgcolor: '#ffffff' }),
           }}
         >
+          {/* Header dengan icon dan judul */}
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-            <SchoolIcon 
-              sx={{ 
-                fontSize: { xs: 48, sm: 56, md: 64 }, 
-                color: 'primary.main', 
-                mb: 2 
-              }} 
+            <SchoolIcon
+              sx={{
+                fontSize: { xs: 48, sm: 56, md: 64 },
+                color: 'primary.main',
+                mb: 2
+              }}
             />
-            <Typography 
-              variant="h4" 
-              component="h1" 
-              fontWeight="bold" 
+            <Typography
+              variant="h4"
+              component="h1"
+              fontWeight="bold"
               gutterBottom
               sx={{
                 fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
@@ -118,8 +192,8 @@ export default function Login() {
             >
               Teman Sekolah
             </Typography>
-            <Typography 
-              variant="body2" 
+            <Typography
+              variant="body2"
               color="text.secondary"
               sx={{
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
@@ -130,12 +204,14 @@ export default function Login() {
             </Typography>
           </Box>
 
+          {/* Alert error */}
           {error && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
 
+          {/* Form Login */}
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
               margin="normal"
@@ -191,56 +267,15 @@ export default function Login() {
               variant="contained"
               size="large"
               disabled={loading}
-              sx={{ 
-                mt: 3, 
-                mb: 2, 
+              sx={{
+                mt: 3,
+                mb: 2,
                 py: { xs: 1.5, sm: 1.75 },
                 fontSize: { xs: '1rem', sm: '0.875rem' },
               }}
             >
               {loading ? 'Memproses...' : 'Login'}
             </Button>
-          </Box>
-
-          <Box sx={{ mt: 3 }}>
-            <Typography 
-              variant="caption" 
-              color="text.secondary" 
-              display="block" 
-              gutterBottom
-              sx={{
-                fontSize: { xs: '0.65rem', sm: '0.75rem' },
-              }}
-            >
-              ** Akun Demo untuk Testing **
-            </Typography>
-            <Paper 
-              variant="outlined" 
-              sx={{ 
-                p: { xs: 1.5, sm: 2 }, 
-                bgcolor: 'grey.50', 
-                fontSize: { xs: '0.65rem', sm: '0.75rem' },
-              }}
-            >
-              <Typography variant="body2" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
-                Super Admin:
-              </Typography>
-              <Typography variant="body2" fontSize="0.7rem" sx={{ mt: 1 }}>
-                Username: yayasan_sejahtera | Password: admin123
-              </Typography>
-              <Typography variant="body2" fontSize="0.7rem" sx={{ mt: 1 }}>
-                TU: username: tu_admin | Password: tu123
-              </Typography>
-              <Typography variant="body2" fontSize="0.7rem" sx={{ mt: 1 }}>
-                Guru: username: guru_budi | Password: guru123
-              </Typography>
-              <Typography variant="body2" fontSize="0.7rem" sx={{ mt: 1 }}>
-                Ortu: username: ortu_ahmad | Password: ortu123
-              </Typography>
-              <Typography variant="body2" fontSize="0.7rem" sx={{ mt: 1 }}>
-                Siswa: username: siswa_ahmad | Password: siswa123
-              </Typography>
-            </Paper>
           </Box>
         </Paper>
       </Container>

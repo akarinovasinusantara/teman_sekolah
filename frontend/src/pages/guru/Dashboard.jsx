@@ -1,3 +1,26 @@
+/**
+ * =============================================
+ * DASHBOARD GURU
+ * =============================================
+ * 
+ * Komponen: GuruDashboard
+ * File: /frontend/src/pages/guru/Dashboard.jsx
+ * 
+ * Deskripsi:
+ * Halaman dashboard utama untuk Guru.
+ * Menampilkan ringkasan kelas yang diampu, jadwal mengajar,
+ * dan statistik aktivitas mengajar.
+ * 
+ * Fitur:
+ * - Statistik (Total Kelas, Total Siswa, Jurnal Terisi)
+ * - Jadwal mengajar hari ini
+ * - Quick access ke Absensi, Input Nilai, E-Rapor
+ * - Pengumuman yang telah dibuat
+ * 
+ * Role: Guru
+ * Route: /guru
+ */
+
 import { useContext } from 'react'
 import { AuthContext } from '../../App'
 import Grid from '@mui/material/Grid'
@@ -6,231 +29,175 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import GradeIcon from '@mui/icons-material/Grade'
-import MenuBookIcon from '@mui/icons-material/MenuBook'
-import AnnouncementIcon from '@mui/icons-material/Announcement'
-import { useNavigate } from 'react-router-dom'
+import CardActions from '@mui/material/CardActions'
+import Button from '@mui/material/Button'
+import ClassIcon from '@mui/icons-material/Class'
+import PeopleIcon from '@mui/icons-material/People'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import EventIcon from '@mui/icons-material/Event'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 
-const menuCards = [
-  { title: 'Absensi Siswa', desc: 'Isi kehadiran siswa per kelas', icon: <CheckCircleIcon />, color: '#2e7d32', path: '/guru/absensi' },
-  { title: 'Input Nilai', desc: 'Input nilai harian, UTS, UAS', icon: <GradeIcon />, color: '#1976d2', path: '/guru/nilai' },
-  { title: 'E-Rapor', desc: 'Isi deskripsi rapor siswa', icon: <MenuBookIcon />, color: '#9c27b0', path: '/guru/rapor' },
-  { title: 'Pengumuman Kelas', desc: 'Kirim pengumuman untuk kelas', icon: <AnnouncementIcon />, color: '#ed6c02', path: '/guru/pengumuman' },
+/**
+ * Data kartu statistik untuk dashboard Guru
+ * 
+ * @constant {Array<Object>}
+ */
+const statsCards = [
+  { title: 'Total Kelas Diampu', value: '6', icon: <ClassIcon />, color: '#1976d2' },
+  { title: 'Total Siswa', value: '180', icon: <PeopleIcon />, color: '#2e7d32' },
+  { title: 'Jurnal Terisi', value: '18/24', icon: <AssignmentIcon />, color: '#9c27b0' },
 ]
 
+/**
+ * Data jadwal mengajar hari ini (dummy)
+ * 
+ * @constant {Array<Object>}
+ */
+const todaySchedule = [
+  { jam: '07:00 - 08:30', kelas: 'X-A', mapel: 'Matematika' },
+  { jam: '08:30 - 10:00', kelas: 'XI-IPA-1', mapel: 'Matematika' },
+  { jam: '10:30 - 12:00', kelas: 'XII-IPS-2', mapel: 'Matematika' },
+]
+
+/**
+ * Komponen Dashboard Guru
+ * 
+ * @component
+ * @returns {JSX.Element} Halaman dashboard guru
+ */
 export default function GuruDashboard() {
   const { user } = useContext(AuthContext)
-  const navigate = useNavigate()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(900))
 
   return (
-    <Box>
-      <Typography 
-        variant="h4" 
-        gutterBottom 
-        fontWeight="bold"
-        sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' } }}
-      >
+    <Box sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+      {/* Header */}
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
         Dashboard Guru
       </Typography>
-      <Typography 
-        variant="body1" 
-        color="text.secondary" 
-        gutterBottom 
-        sx={{ 
-          mb: 4,
-          fontSize: { xs: '0.875rem', sm: '1rem' }
-        }}
-      >
+      
+      <Typography variant="body1" color="text.secondary" gutterBottom sx={{ mb: 4 }}>
         Selamat datang, {user?.nama_lengkap}
       </Typography>
 
-      <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography 
-              variant="h6" 
-              gutterBottom
-              sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-            >
-              Jadwal Hari Ini
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              {[
-                { jam: '07:00 - 08:30', mapel: 'Matematika', kelas: 'X-A' },
-                { jam: '08:30 - 10:00', mapel: 'Matematika', kelas: 'X-B' },
-                { jam: '10:30 - 12:00', mapel: 'Matematika', kelas: 'XI-A' },
-              ].map((jadwal, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    py: 1.5,
-                    borderBottom: index < 2 ? '1px solid' : 'none',
-                    borderColor: 'divider',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: { xs: 0.5, sm: 0 },
-                  }}
-                >
-                  <Box>
-                    <Typography 
-                      variant="body2" 
-                      fontWeight="bold"
-                      sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}
-                    >
-                      {jadwal.mapel}
+      {/* Kartu Statistik */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {statsCards.map((stat, index) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography color="text.secondary" variant="body2">
+                      {stat.title}
                     </Typography>
-                    <Typography 
-                      variant="caption" 
-                      color="text.secondary"
-                      sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
-                    >
-                      {jadwal.kelas}
+                    <Typography variant="h5" fontWeight="bold">
+                      {stat.value}
                     </Typography>
                   </Box>
-                  <Typography 
-                    variant="caption" 
-                    color="text.secondary"
-                    sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
-                  >
-                    {jadwal.jam}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography 
-              variant="h6" 
-              gutterBottom
-              sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-            >
-              Statistik Pengisian
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Box sx={{ mb: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Absensi</Typography>
-                  <Typography variant="body2" color="success.main" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>85%</Typography>
-                </Box>
-                <Box sx={{ width: '100%', bgcolor: 'grey.200', height: 8, borderRadius: 1 }}>
-                  <Box sx={{ width: '85%', bgcolor: 'success.main', height: '100%', borderRadius: 1 }} />
-                </Box>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Nilai</Typography>
-                  <Typography variant="body2" color="primary.main" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>60%</Typography>
-                </Box>
-                <Box sx={{ width: '100%', bgcolor: 'grey.200', height: 8, borderRadius: 1 }}>
-                  <Box sx={{ width: '60%', bgcolor: 'primary.main', height: '100%', borderRadius: 1 }} />
-                </Box>
-              </Box>
-              <Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>E-Rapor</Typography>
-                  <Typography variant="body2" color="warning.main" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>40%</Typography>
-                </Box>
-                <Box sx={{ width: '100%', bgcolor: 'grey.200', height: 8, borderRadius: 1 }}>
-                  <Box sx={{ width: '40%', bgcolor: 'warning.main', height: '100%', borderRadius: 1 }} />
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography 
-              variant="h6" 
-              gutterBottom
-              sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-            >
-              Pengumuman Terbaru
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              {[
-                { text: 'Rapat guru hari Jumat, 20 Maret 2026', time: '2 hari lagi' },
-                { text: 'Deadline input nilai UTS: 25 Maret', time: '1 minggu lagi' },
-              ].map((item, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    p: 1.5,
-                    bgcolor: index === 0 ? 'warning.light' : 'info.light',
-                    borderRadius: 1,
-                    mb: 1,
-                  }}
-                >
-                  <Typography 
-                    variant="body2" 
-                    fontWeight="bold"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                  >
-                    {item.text}
-                  </Typography>
-                  <Typography 
-                    variant="caption" 
-                    color="text.secondary"
-                    sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
-                  >
-                    {item.time}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        </Grid>
-
-        {menuCards.map((card, index) => (
-          <Grid size={{ xs: 12, sm: 6 }} key={index}>
-            <Card sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 6 } }} onClick={() => navigate(card.path)}>
-              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', py: 4 }}>
-                  <Box
-                    sx={{
-                      width: { xs: 56, sm: 64 },
-                      height: { xs: 56, sm: 64 },
-                      borderRadius: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      bgcolor: card.color,
-                      color: 'white',
-                      mb: 2,
-                    }}
-                  >
-                    {card.icon}
+                  <Box sx={{ 
+                    width: 48, 
+                    height: 48, 
+                    borderRadius: 2,
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    bgcolor: stat.color,
+                    color: 'white' 
+                  }}>
+                    {stat.icon}
                   </Box>
-                  <Typography 
-                    variant="h6" 
-                    fontWeight="bold" 
-                    gutterBottom
-                    sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-                  >
-                    {card.title}
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    align="center"
-                    sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                  >
-                    {card.desc}
-                  </Typography>
                 </Box>
               </CardContent>
             </Card>
           </Grid>
         ))}
+      </Grid>
+
+      {/* Jadwal & Quick Actions */}
+      <Grid container spacing={2}>
+        {/* Jadwal Mengajar Hari Ini */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <EventIcon /> Jadwal Hari Ini
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+              {todaySchedule.map((item, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    p: 2,
+                    mb: 1,
+                    borderRadius: 2,
+                    bgcolor: 'primary.light',
+                    color: 'primary.contrastText',
+                  }}
+                >
+                  <Typography variant="body2" fontWeight="bold">
+                    {item.jam}
+                  </Typography>
+                  <Typography variant="body2">
+                    {item.kelas} - {item.mapel}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Quick Actions */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Aksi Cepat
+            </Typography>
+            <Grid container spacing={1} sx={{ mt: 1 }}>
+              <Grid size={{ xs: 6 }}>
+                <Button 
+                  fullWidth 
+                  variant="contained" 
+                  sx={{ py: 2 }}
+                  href="/guru/absensi"
+                >
+                  Input Absensi
+                </Button>
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <Button 
+                  fullWidth 
+                  variant="contained" 
+                  sx={{ py: 2 }}
+                  href="/guru/nilai"
+                >
+                  Input Nilai
+                </Button>
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <Button 
+                  fullWidth 
+                  variant="outlined" 
+                  sx={{ py: 2 }}
+                  href="/guru/rapor"
+                >
+                  E-Rapor
+                </Button>
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <Button 
+                  fullWidth 
+                  variant="outlined" 
+                  sx={{ py: 2 }}
+                  href="/guru/pengumuman"
+                >
+                  Pengumuman
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
       </Grid>
     </Box>
   )

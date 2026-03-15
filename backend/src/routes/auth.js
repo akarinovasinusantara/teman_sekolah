@@ -4,11 +4,42 @@ import { User } from '../models/index.js'
 
 const router = express.Router()
 
-// Login
+/**
+ * =============================================
+ * ROUTE AUTHENTIKASI
+ * =============================================
+ * 
+ * Endpoint untuk mengelola autentikasi user:
+ * - POST /login - Login user dan generate token JWT
+ * - POST /register - Register user baru (hanya super_admin)
+ * - GET /me - Mendapatkan data user yang sedang login
+ * 
+ * @route POST /api/auth/login
+ * @access Public
+ * @body {string} username - Username user
+ * @body {string} password - Password user
+ * @returns {Object} Token JWT dan data user
+ */
+
+/**
+ * @route   POST /api/auth/login
+ * @desc    Login user dan mendapatkan token JWT
+ * @access  Public
+ * 
+ * Proses login:
+ * 1. Validasi username dan password dari request body
+ * 2. Cari user berdasarkan username di database
+ * 3. Cek apakah user aktif
+ * 4. Validasi password menggunakan bcrypt
+ * 5. Update last_login user
+ * 6. Generate token JWT dengan payload id dan role user
+ * 7. Return token dan data user (tanpa password)
+ */
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body
 
+    // Validasi input
     if (!username || !password) {
       return res.status(400).json({
         success: false,
@@ -16,6 +47,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
+    // Cari user berdasarkan username
     const user = await User.findOne({ where: { username } })
 
     if (!user) {
@@ -25,6 +57,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
+    // Cek apakah user aktif
     if (!user.is_active) {
       return res.status(401).json({
         success: false,
@@ -32,6 +65,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
+    // Validasi password
     const isPasswordValid = await user.validatePassword(password)
 
     if (!isPasswordValid) {
@@ -45,7 +79,7 @@ router.post('/login', async (req, res) => {
     user.last_login = new Date()
     await user.save()
 
-    // Generate token
+    // Generate token JWT
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
@@ -78,12 +112,30 @@ router.post('/login', async (req, res) => {
   }
 })
 
-// Register (hanya untuk super_admin)
+/**
+ * @route   POST /api/auth/register
+ * @desc    Register user baru (hanya untuk super_admin)
+ * @access  Private (Super Admin only)
+ * 
+ * Proses register:
+ * 1. Ambil data user dari request body
+ * 2. Cek apakah username sudah digunakan
+ * 3. Buat user baru dengan password ter-hash
+ * 4. Return data user yang dibuat
+ * 
+ * @body {string} username - Username untuk login
+ * @body {string} password - Password user
+ * @body {string} role - Role user (super_admin, tu, guru, ortu, siswa)
+ * @body {string} nama_lengkap - Nama lengkap user
+ * @body {string} email - Email user
+ * @body {string} no_telepon - Nomor telepon user
+ * @body {string} user_id - ID user unik (opsional, auto-generate jika kosong)
+ */
 router.post('/register', async (req, res) => {
   try {
     const { username, password, role, nama_lengkap, email, no_telepon, user_id } = req.body
 
-    // Check if user exists
+    // Cek apakah username sudah digunakan
     const existingUser = await User.findOne({
       where: {
         username
@@ -97,7 +149,7 @@ router.post('/register', async (req, res) => {
       })
     }
 
-    // Create user
+    // Buat user baru
     const user = await User.create({
       user_id: user_id || `USR${Date.now()}`,
       username,
@@ -129,9 +181,23 @@ router.post('/register', async (req, res) => {
   }
 })
 
-// Get current user
+/**
+ * @route   GET /api/auth/me
+ * @desc    Mendapatkan data user yang sedang login
+ * @access  Private (semua role)
+ * 
+ * Proses:
+ * 1. Ambil token dari Authorization header
+ * 2. Decode token JWT
+ * 3. Cari user berdasarkan id dari token
+ * 4. Return data user (tanpa password)
+ * 
+ * @header {string} Authorization - Bearer <token>
+ * @returns {Object} Data user yang sedang login
+ */
 router.get('/me', async (req, res) => {
   try {
+    // Ambil token dari header
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {
       return res.status(401).json({
@@ -140,7 +206,10 @@ router.get('/me', async (req, res) => {
       })
     }
 
+    // Decode token
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    
+    // Cari user berdasarkan id dari token
     const user = await User.findByPk(decoded.id)
 
     if (!user) {

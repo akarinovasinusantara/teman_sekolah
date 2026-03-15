@@ -1,15 +1,60 @@
 import sequelize from '../config/database.js'
 import { User, Sekolah, Guru, MataPelajaran, Kelas } from '../models/index.js'
 
+/**
+ * =============================================
+ * DATABASE SEEDER
+ * =============================================
+ * 
+ * Script untuk mengisi database dengan data awal (seed data)
+ * 
+ * Digunakan untuk:
+ * - Development: Memudahkan testing tanpa input manual
+ * - Demo: Menampilkan fungsionalitas aplikasi
+ * 
+ * Data yang di-seed:
+ * 1. Users (Super Admin, TU, Guru, Ortu, Siswa)
+ * 2. Sekolah
+ * 3. Guru (data profil)
+ * 4. Mata Pelajaran (8 mapel wajib)
+ * 5. Kelas (6 kelas: X, XI, XII masing-masing 2 kelas)
+ * 
+ * CARA MENGGUNAKAN:
+ * 
+ * 1. Hapus database lama (opsional):
+ *    - Hapus file database.sqlite
+ * 
+ * 2. Jalankan seed:
+ *    npm run seed
+ * 
+ * AKUN YANG DIBUAT:
+ * 
+ * | Role        | Username           | Password  |
+ * |-------------|-------------------|-----------|
+ * | super_admin | yayasan_sejahtera | admin123  |
+ * | tu          | tu_admin          | tu123     |
+ * | guru        | guru_budi         | guru123   |
+ * | ortu        | ortu_ahmad        | ortu123   |
+ * | siswa       | siswa_ahmad       | siswa123  |
+ */
+
 const seedDatabase = async () => {
   try {
     console.log('🌱 Mulai seeding database...')
 
-    // Sync database (buat tabel jika belum ada)
+    // Sync database dengan force: true
+    // Ini akan DROP dan CREATE ulang semua tabel
     await sequelize.sync({ force: true })
     console.log('✅ Tabel database dibuat')
 
-    // Create Super Admin
+    // ==========================================
+    // CREATE USERS
+    // ==========================================
+
+    /**
+     * Super Admin - Yayasan/Pengembang
+     * Akses: Full access ke semua fitur dan sekolah
+     */
     const superAdmin = await User.create({
       user_id: '001',
       username: 'yayasan_sejahtera',
@@ -21,7 +66,10 @@ const seedDatabase = async () => {
     })
     console.log('✅ Super Admin dibuat')
 
-    // Create TU User
+    /**
+     * TU (Tata Usaha) - Staf Administrasi
+     * Akses: PPDB, Keuangan, Manajemen Siswa/Guru/Kelas
+     */
     const tuUser = await User.create({
       user_id: '002',
       username: 'tu_admin',
@@ -33,7 +81,10 @@ const seedDatabase = async () => {
     })
     console.log('✅ TU User dibuat')
 
-    // Create Guru User
+    /**
+     * Guru - Pengajar
+     * Akses: Input absensi, nilai, pengumuman kelas
+     */
     const guruUser = await User.create({
       user_id: '003',
       username: 'guru_budi',
@@ -45,7 +96,10 @@ const seedDatabase = async () => {
     })
     console.log('✅ Guru User dibuat')
 
-    // Create Ortu User
+    /**
+     * Ortu - Orang Tua Siswa
+     * Akses: Monitoring anak (keuangan, absensi, nilai)
+     */
     const ortuUser = await User.create({
       user_id: '004',
       username: 'ortu_ahmad',
@@ -57,7 +111,10 @@ const seedDatabase = async () => {
     })
     console.log('✅ Ortu User dibuat')
 
-    // Create Siswa User
+    /**
+     * Siswa - Siswa
+     * Akses: Lihat informasi pribadi
+     */
     const siswaUser = await User.create({
       user_id: '005',
       username: 'siswa_ahmad',
@@ -69,7 +126,13 @@ const seedDatabase = async () => {
     })
     console.log('✅ Siswa User dibuat')
 
-    // Create Sekolah
+    // ==========================================
+    // CREATE SEKOLAH
+    // ==========================================
+
+    /**
+     * Data sekolah contoh
+     */
     const sekolah = await Sekolah.create({
       nama: 'SMA Negeri 1 Jakarta',
       npsn: '10101010',
@@ -84,7 +147,14 @@ const seedDatabase = async () => {
     })
     console.log('✅ Sekolah dibuat')
 
-    // Create Guru Data
+    // ==========================================
+    // CREATE GURU (DATA PROFIL)
+    // ==========================================
+
+    /**
+     * Data profil guru
+     * Terhubung dengan user guru_budi
+     */
     const guru = await Guru.create({
       nip: '198501012010011001',
       nama_lengkap: 'Budi Santoso, S.Pd',
@@ -102,7 +172,13 @@ const seedDatabase = async () => {
     })
     console.log('✅ Data Guru dibuat')
 
-    // Create Mata Pelajaran
+    // ==========================================
+    // CREATE MATA PELAJARAN
+    // ==========================================
+
+    /**
+     * Daftar mata pelajaran wajib SMA
+     */
     const mapelList = [
       { kode: 'MTK', nama: 'Matematika', kelompok: 'Wajib', kkm: 75, jam_per_minggu: 5 },
       { kode: 'BIN', nama: 'Bahasa Indonesia', kelompok: 'Wajib', kkm: 75, jam_per_minggu: 4 },
@@ -119,7 +195,14 @@ const seedDatabase = async () => {
     }
     console.log('✅ Mata Pelajaran dibuat')
 
-    // Create Kelas
+    // ==========================================
+    // CREATE KELAS
+    // ==========================================
+
+    /**
+     * Daftar kelas untuk 3 tingkat (X, XI, XII)
+     * Masing-masing 2 kelas paralel
+     */
     const kelasList = [
       { nama: 'X-A', tingkat: 10, tahun_ajaran: '2025/2026', kapasitas: 32 },
       { nama: 'X-B', tingkat: 10, tahun_ajaran: '2025/2026', kapasitas: 32 },
@@ -134,6 +217,10 @@ const seedDatabase = async () => {
     }
     console.log('✅ Kelas dibuat')
 
+    // ==========================================
+    // SUMMARY
+    // ==========================================
+
     console.log('\n✅ Seeding selesai!')
     console.log('\n📋 Akun yang dibuat:')
     console.log('  Super Admin: yayasan_sejahtera / admin123')
@@ -141,7 +228,7 @@ const seedDatabase = async () => {
     console.log('  Guru: guru_budi / guru123')
     console.log('  Ortu: ortu_ahmad / ortu123')
     console.log('  Siswa: siswa_ahmad / siswa123')
-    
+
     process.exit(0)
   } catch (error) {
     console.error('❌ Error seeding:', error)
