@@ -71,12 +71,14 @@ export default function Login() {
       )
 
       if (user) {
-        login({
+        const userData = {
           user_id: user.user_id,
           username: user.username,
           role: user.role,
           nama_lengkap: user.nama_lengkap,
-        })
+        }
+        console.log('Login berhasil - User data:', userData)
+        login(userData)
 
         // Redirect berdasarkan role
         switch (user.role) {

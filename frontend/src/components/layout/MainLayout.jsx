@@ -156,18 +156,22 @@ const menuByRole = {
 export default function MainLayout({ children }) {
   // Ambil data user dan fungsi logout dari AuthContext
   const { user, logout } = useContext(AuthContext)
-  
+
   // Hooks untuk navigasi dan routing
   const navigate = useNavigate()
   const location = useLocation()
-  
+
   // Hooks untuk responsive design
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(MOBILE_BREAKPOINT))
-  
+
   // State management
-  const [mobileOpen, setMobileOpen] = useState(false)     // State untuk mobile drawer
-  const [anchorEl, setAnchorEl] = useState(null)          // State untuk user menu
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  // Debug: Log user data
+  console.log('MainLayout - User:', user)
+  console.log('MainLayout - User role:', user?.role)
 
   /**
    * Handle toggle mobile drawer
@@ -356,7 +360,7 @@ export default function MainLayout({ children }) {
           
           {/* User menu dropdown */}
           <Menu
-            anchorEl={anchorEl,
+            anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
             PaperProps={{
