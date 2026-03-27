@@ -2,9 +2,7 @@ import { useState } from 'react'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
+import Card from '@mui/material/Card'
 import IconButton from '@mui/material/IconButton'
 import DownloadIcon from '@mui/icons-material/Download'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -18,6 +16,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import DescriptionIcon from '@mui/icons-material/Description'
 import EventIcon from '@mui/icons-material/Event'
 import WarningIcon from '@mui/icons-material/Warning'
+import EmailIcon from '@mui/icons-material/Email'
 
 const suratData = [
   { 
@@ -58,21 +57,24 @@ const suratData = [
   },
 ]
 
-const getIconByKategori = (kategori) => {
-  switch (kategori) {
-    case 'Pengumuman':
-      return <DescriptionIcon />
-    case 'Undangan':
-      return <EventIcon />
-    case 'Keuangan':
-      return <WarningIcon />
-    default:
-      return <DescriptionIcon />
+const getBagdeAndIcon = (kategori, prioritas) => {
+  let icon = <DescriptionIcon />
+  let color = 'primary'
+  
+  if (kategori === 'Undangan') {
+    icon = <EventIcon />
+    color = 'info'
+  } else if (kategori === 'Keuangan') {
+    icon = <WarningIcon />
+    color = 'warning'
+  } else if (kategori === 'Akademik') {
+    icon = <DescriptionIcon />
+    color = 'secondary'
   }
-}
 
-const getPrioritasColor = (prioritas) => {
-  return prioritas === 'Penting' ? 'error' : 'default'
+  if (prioritas === 'Penting') color = 'error'
+
+  return { icon, color }
 }
 
 export default function InformasiSurat() {
@@ -80,119 +82,188 @@ export default function InformasiSurat() {
   const [selectedSurat, setSelectedSurat] = useState(null)
 
   return (
-    <Box>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Informasi & Surat Edaran
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Surat edaran dan pengumuman dari sekolah
-      </Typography>
+    <Box sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden', pb: 4 }}>
+      {/* Graduate/Premium Header */}
+      <Box sx={{
+        p: { xs: 3, md: 4 },
+        mb: 4,
+        borderRadius: 3,
+        background: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 100%)',
+        color: 'white',
+        boxShadow: '0 10px 30px -10px rgba(21, 101, 192, 0.4)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <Box sx={{ position: 'relative', zIndex: 2 }}>
+          <Typography variant="h4" fontWeight="800" sx={{ mb: 1, fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
+            Informasi & Surat Edaran
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+            Kumpulan pengumuman, undangan, dan surat resmi sekolah
+          </Typography>
+        </Box>
+        {/* Background Decorative Icon */}
+        <EmailIcon sx={{ 
+          position: 'absolute', 
+          right: -10, 
+          top: -30, 
+          fontSize: 220, 
+          opacity: 0.1,
+          transform: 'rotate(15deg)'
+        }} />
+      </Box>
 
-      <Paper>
-        <List>
-          {suratData.map((surat, index) => (
-            <ListItem
+      {/* Modern Card List */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {suratData.map((surat) => {
+          const { icon, color } = getBagdeAndIcon(surat.kategori, surat.prioritas)
+          
+          return (
+            <Card
               key={surat.id}
-              alignItems="flex-start"
+              elevation={0}
               sx={{
-                borderBottom: index < suratData.length - 1 ? '1px solid' : 'none',
+                p: { xs: 2.5, md: 3 },
+                borderRadius: 3,
+                border: '1px solid',
                 borderColor: 'divider',
-                py: 2,
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: { xs: 'flex-start', md: 'center' },
+                justifyContent: 'space-between',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 12px 24px rgba(0,0,0,0.06)',
+                  borderColor: `${color}.main`
+                }
               }}
-              secondaryAction={
-                <Box>
-                  <IconButton edge="end" size="small" onClick={() => { setSelectedSurat(surat); setOpen(true) }}>
-                    <VisibilityIcon />
-                  </IconButton>
-                  {surat.lampiran && (
-                    <IconButton edge="end" size="small">
-                      <DownloadIcon />
-                    </IconButton>
-                  )}
-                </Box>
-              }
             >
-              <ListItemText
-                primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                    <Box sx={{ color: 'primary.main' }}>
-                      {getIconByKategori(surat.kategori)}
-                    </Box>
-                    <Typography variant="subtitle1" fontWeight="bold">
+              <Box sx={{ display: 'flex', gap: 3, alignItems: 'flex-start', flexGrow: 1, mb: { xs: 2, md: 0 } }}>
+                <Box sx={{ 
+                  width: 56, height: 56, borderRadius: 2, 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  bgcolor: `${color}.lighter`, color: `${color}.main`, flexShrink: 0,
+                  boxShadow: `0 4px 12px rgba(0,0,0,0.02)`
+                }}>
+                  {icon}
+                </Box>
+                <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.5 }}>
+                    <Typography variant="h6" fontWeight="800" sx={{ color: 'text.primary', lineHeight: 1.2 }}>
                       {surat.judul}
                     </Typography>
+                    {surat.prioritas === 'Penting' && (
+                      <Chip label="Penting" size="small" color="error" sx={{ fontWeight: 'bold', height: 22 }} />
+                    )}
+                  </Box>
+                  
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {surat.isi}
+                  </Typography>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
                     <Chip 
                       label={surat.kategori} 
                       size="small" 
                       variant="outlined"
-                      color={surat.kategori === 'Keuangan' ? 'warning' : 'primary'}
+                      color={color}
+                      sx={{ fontWeight: 'bold', borderWidth: 2 }}
                     />
-                    {surat.prioritas === 'Penting' && (
-                      <Chip label="Penting" size="small" color="error" />
-                    )}
-                  </Box>
-                }
-                secondary={
-                  <>
-                    <Typography variant="body2" sx={{ mt: 1, whiteSpace: 'pre-line' }}>
-                      {surat.isi.substring(0, 150)}...
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
-                      <AccessTimeIcon fontSize="small" color="action" />
-                      <Typography variant="caption" color="text.secondary">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
+                      <AccessTimeIcon fontSize="small" />
+                      <Typography variant="caption" fontWeight="600">
                         {surat.tanggal}
                       </Typography>
                     </Box>
-                  </>
-                }
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
+                  </Box>
+                </Box>
+              </Box>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{selectedSurat?.judul}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-              <Chip label={selectedSurat?.kategori} variant="outlined" />
-              <Chip label={selectedSurat?.prioritas} color={selectedSurat?.prioritas === 'Penting' ? 'error' : 'default'} />
+              <Box sx={{ display: 'flex', gap: 1, ml: { md: 2 }, width: { xs: '100%', md: 'auto' }, justifyContent: 'flex-end' }}>
+                <Button 
+                  variant="outlined" 
+                  color="primary" 
+                  startIcon={<VisibilityIcon />}
+                  onClick={() => { setSelectedSurat(surat); setOpen(true) }}
+                  sx={{ borderRadius: 2, fontWeight: 600, textTransform: 'none' }}
+                >
+                  Baca
+                </Button>
+                {surat.lampiran && (
+                  <Button 
+                    variant="contained" 
+                    color="primary"
+                    sx={{ borderRadius: 2, minWidth: 48, px: 0 }}
+                  >
+                    <DownloadIcon fontSize="small" />
+                  </Button>
+                )}
+              </Box>
+            </Card>
+          )
+        })}
+      </Box>
+
+      {/* Surat Detail Dialog */}
+      <Dialog 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'divider', pb: 2, pt: 3, px: 4 }}>
+          {selectedSurat?.judul}
+        </DialogTitle>
+        <DialogContent sx={{ p: 4 }}>
+          <Box sx={{ mt: 1 }}>
+            <Box sx={{ display: 'flex', gap: 1.5, mb: 3 }}>
+              <Chip label={selectedSurat?.kategori} variant="outlined" color="primary" sx={{ fontWeight: 'bold', borderWidth: 2 }} />
+              {selectedSurat?.prioritas === 'Penting' && (
+                <Chip label="Penting" color="error" sx={{ fontWeight: 'bold' }} />
+              )}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto', color: 'text.secondary', bgcolor: 'grey.100', px: 1.5, borderRadius: 2 }}>
+                <AccessTimeIcon sx={{ fontSize: 16 }} />
+                <Typography variant="caption" fontWeight="700">
+                  {selectedSurat?.tanggal}
+                </Typography>
+              </Box>
             </Box>
             
-            <Paper sx={{ p: 3, bgcolor: 'grey.50', mb: 2 }}>
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}>
+            <Paper elevation={0} sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: 3, border: '1px solid', borderColor: 'grey.200', mb: 3 }}>
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8, color: 'text.primary', fontWeight: 500 }}>
                 {selectedSurat?.isi}
               </Typography>
             </Paper>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <AccessTimeIcon fontSize="small" color="action" />
-              <Typography variant="caption" color="text.secondary">
-                Diterbitkan: {selectedSurat?.tanggal}
-              </Typography>
-            </Box>
-
             {selectedSurat?.lampiran && (
-              <Box sx={{ mt: 2, p: 2, bgcolor: 'primary.lighter', borderRadius: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
-                <DescriptionIcon color="primary" />
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="body2" fontWeight="bold">
-                    {selectedSurat.lampiran}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Lampiran dokumen
-                  </Typography>
-                </Box>
-                <Button variant="outlined" size="small" startIcon={<DownloadIcon />}>
-                  Download
-                </Button>
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="subtitle2" fontWeight="700" color="text.secondary" gutterBottom>
+                  Lampiran Dokumen
+                </Typography>
+                <Card elevation={0} sx={{ p: 2, bgcolor: 'primary.50', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2, border: '1px solid', borderColor: 'primary.200' }}>
+                  <Box sx={{ p: 1, bgcolor: 'primary.main', borderRadius: 1.5, color: 'white', display: 'flex' }}>
+                    <DescriptionIcon />
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="body2" fontWeight="800" color="primary.900">
+                      {selectedSurat.lampiran}
+                    </Typography>
+                    <Typography variant="caption" color="primary.700" fontWeight="500">
+                      PDF Document (1.2 MB)
+                    </Typography>
+                  </Box>
+                  <Button variant="contained" size="small" startIcon={<DownloadIcon />} sx={{ borderRadius: 2, fontWeight: 600, px: 2, py: 1, boxShadow: 'none' }}>
+                    Download
+                  </Button>
+                </Card>
               </Box>
             )}
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Tutup</Button>
+        <DialogActions sx={{ p: 3, pt: 1, px: 4 }}>
+          <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Tutup</Button>
         </DialogActions>
       </Dialog>
     </Box>

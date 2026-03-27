@@ -1,6 +1,8 @@
 import { BrowserRouter } from 'react-router-dom'
+import { ThemeProvider } from '@mui/material/styles'
 import { AuthProvider } from './context/AuthContext'
 import AppRoutes from './routes/AppRoutes'
+import { appTheme } from './theme'
 
 /**
  * =============================================
@@ -16,11 +18,13 @@ import AppRoutes from './routes/AppRoutes'
  */
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider theme={appTheme}>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
 

@@ -13,6 +13,8 @@ import SendIcon from '@mui/icons-material/Send'
 import Alert from '@mui/material/Alert'
 import Chip from '@mui/material/Chip'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import DescriptionIcon from '@mui/icons-material/Description'
 
 const pengumumanData = [
   { id: 1, judul: 'Ujian Tengah Semester', isi: 'UTS akan dilaksanakan pada tanggal 20-25 Maret 2026. Persiapkan diri kalian dengan baik.', kelas: 'X-A', tanggal: '15 Mar 2026, 10:30' },
@@ -49,53 +51,82 @@ export default function PengumumanKelas() {
   }
 
   return (
-    <Box>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Pengumuman Kelas
-      </Typography>
+    <Box sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden', pb: 4 }}>
+      {/* Premium Header */}
+      <Box sx={{
+        p: { xs: 3, md: 4 },
+        mb: 4,
+        borderRadius: 3,
+        background: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 100%)',
+        color: 'white',
+        boxShadow: '0 10px 30px -10px rgba(21, 101, 192, 0.4)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <Box sx={{ position: 'relative', zIndex: 2 }}>
+          <Typography variant="h4" fontWeight="800" sx={{ mb: 1, fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
+            Pusat Pengumuman
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+            Broadcast informasi dan edaran penting ke kelas secara real-time
+          </Typography>
+        </Box>
+        <CampaignIcon sx={{ 
+          position: 'absolute', 
+          right: -10, 
+          top: -30, 
+          fontSize: 220, 
+          opacity: 0.1,
+          transform: 'rotate(-10deg)'
+        }} />
+      </Box>
 
       {sent && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          Pengumuman berhasil dikirim!
+        <Alert severity="success" sx={{ mb: 4, borderRadius: 2, fontWeight: 500 }}>
+          Siaran pengumuman berhasil dikirimkan ke Dashboard Siswa dan Orang Tua!
         </Alert>
       )}
 
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-        <Paper sx={{ flex: 1, minWidth: 300, p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Buat Pengumuman Baru
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+        {/* Form Pembuatan Pengumuman */}
+        <Paper elevation={0} sx={{ flex: 1, minWidth: { md: 400 }, p: { xs: 3, md: 4 }, borderRadius: 3, border: '1px solid', borderColor: 'divider', height: 'fit-content' }}>
+          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <DescriptionIcon color="primary" /> Buat Pengumuman Baru
           </Typography>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <TextField
               fullWidth
               label="Judul Pengumuman"
               value={judul}
               onChange={(e) => setJudul(e.target.value)}
-              placeholder="Contoh: Ujian Tengah Semester"
+              placeholder="Contoh: Jadwal Ujian Tengah Semester"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <TextField
               select
               SelectProps={{ native: true }}
-              label="Kelas Tujuan"
+              label="Distribusi Kelas Tujuan"
               value={kelas}
               onChange={(e) => setKelas(e.target.value)}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             >
-              <option value="X-A">X-A</option>
-              <option value="X-B">X-B</option>
-              <option value="XI-A">XI-A</option>
-              <option value="XI-B">XI-B</option>
-              <option value="XII-A">XII-A</option>
-              <option value="XII-B">XII-B</option>
+              <option value="X-A">Kelas X-A</option>
+              <option value="X-B">Kelas X-B</option>
+              <option value="XI-A">Kelas XI-A</option>
+              <option value="XI-B">Kelas XI-B</option>
+              <option value="XII-A">Kelas XII-A</option>
+              <option value="XII-B">Kelas XII-B</option>
             </TextField>
             <TextField
               fullWidth
-              label="Isi Pengumuman"
+              label="Isi Pengumuman Lengkap"
               value={isi}
               onChange={(e) => setIsi(e.target.value)}
               multiline
               rows={5}
-              placeholder="Tulis isi pengumuman di sini..."
+              placeholder="Tulis instruksi atau informasi detail pengumuman di sini..."
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <Button
               variant="contained"
@@ -103,58 +134,62 @@ export default function PengumumanKelas() {
               onClick={handleKirim}
               disabled={!judul || !isi}
               size="large"
+              sx={{ borderRadius: 2, py: 1.5, fontWeight: 'bold' }}
             >
-              Kirim Pengumuman
+              Broadcast Pengumuman Sekarang
             </Button>
           </Box>
         </Paper>
 
-        <Paper sx={{ flex: 1, minWidth: 300, p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Riwayat Pengumuman
-          </Typography>
+        {/* List Riwayat */}
+        <Paper elevation={0} sx={{ flex: 1.2, p: 0, borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ p: { xs: 2.5, md: 3 }, borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc' }}>
+            <Typography variant="h6" fontWeight="bold">
+              Log Riwayat Pengumuman
+            </Typography>
+          </Box>
 
-          <List sx={{ maxHeight: 500, overflow: 'auto' }}>
-            {pengumuman.map((item) => (
+          <List sx={{ p: 0, maxHeight: 600, overflow: 'auto' }}>
+            {pengumuman.length > 0 ? pengumuman.map((item, index) => (
               <ListItem
                 key={item.id}
                 alignItems="flex-start"
                 sx={{
-                  bgcolor: 'grey.50',
-                  mb: 1,
-                  borderRadius: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  p: { xs: 2.5, md: 3 },
+                  borderBottom: index !== pengumuman.length - 1 ? '1px solid' : 'none',
+                  borderColor: 'divider',
+                  transition: 'background-color 0.2s',
+                  '&:hover': { bgcolor: 'grey.50' }
                 }}
-                secondaryAction={
-                  <IconButton edge="end" size="small" onClick={() => handleHapus(item.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                }
               >
-                <ListItemText
-                  primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="subtitle2" fontWeight="bold">
-                        {item.judul}
-                      </Typography>
-                      <Chip label={item.kelas} size="small" color="primary" variant="outlined" />
-                    </Box>
-                  }
-                  secondary={
-                    <>
-                      <Typography variant="body2" sx={{ mt: 1 }}>
-                        {item.isi}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
-                        <AccessTimeIcon fontSize="small" color="action" />
-                        <Typography variant="caption" color="text.secondary">
-                          {item.tanggal}
-                        </Typography>
-                      </Box>
-                    </>
-                  }
-                />
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                    <Typography variant="subtitle1" fontWeight="800" color="text.primary">
+                      {item.judul}
+                    </Typography>
+                    <Chip label={item.kelas} size="small" color="primary" sx={{ fontWeight: 'bold', height: 22 }} />
+                  </Box>
+                  <IconButton edge="end" size="small" color="error" onClick={() => handleHapus(item.id)} sx={{ bgcolor: 'error.50' }}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>
+                  {item.isi}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#94A3B8' }}>
+                  <AccessTimeIcon sx={{ fontSize: 16 }} />
+                  <Typography variant="caption" fontWeight="600">
+                    Dikirim: {item.tanggal}
+                  </Typography>
+                </Box>
               </ListItem>
-            ))}
+            )) : (
+              <Box sx={{ p: 4, textAlign: 'center' }}>
+                <Typography color="text.secondary">Belum ada pengumuman yang dikirim.</Typography>
+              </Box>
+            )}
           </List>
         </Paper>
       </Box>

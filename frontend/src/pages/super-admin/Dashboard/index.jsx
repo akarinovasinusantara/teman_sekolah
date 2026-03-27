@@ -1,25 +1,3 @@
-/**
- * =============================================
- * DASHBOARD SUPER ADMIN
- * =============================================
- * 
- * Komponen: SuperAdminDashboard
- * File: /frontend/src/pages/super-admin/Dashboard.jsx
- * 
- * Deskripsi:
- * Halaman dashboard utama untuk Super Admin (Yayasan/Pengembang).
- * Menampilkan ringkasan statistik sekolah, keuangan, dan aktivitas terbaru.
- * 
- * Fitur:
- * - Kartu statistik (Total Sekolah, Siswa, Pemasukan, Pertumbuhan)
- * - Grafik Pemasukan vs Pengeluaran
- * - Statistik Sekolah
- * - Feed aktivitas terbaru
- * 
- * Role: Super Admin only
- * Route: /super-admin
- */
-
 import { useContext } from 'react'
 import { useAuth } from '../../../hooks/useAuth'
 import Grid from '@mui/material/Grid'
@@ -27,253 +5,187 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
+import Avatar from '@mui/material/Avatar'
 import SchoolIcon from '@mui/icons-material/School'
 import PeopleIcon from '@mui/icons-material/People'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { useTheme } from '@mui/material/styles'
+import ShowChartIcon from '@mui/icons-material/ShowChart'
+import ShieldIcon from '@mui/icons-material/Shield'
 
-/**
- * Data kartu statistik untuk ditampilkan di dashboard
- * 
- * @constant {Array<Object>}
- * @property {string} title - Judul statistik
- * @property {string} value - Nilai statistik
- * @property {React.ReactNode} icon - Icon Material-UI
- * @property {string} color - Warna background icon
- */
 const statsCards = [
-  { title: 'Total Sekolah', value: '12', icon: <SchoolIcon />, color: '#1976d2' },
-  { title: 'Total Siswa', value: '3,450', icon: <PeopleIcon />, color: '#2e7d32' },
-  { title: 'Pemasukan Bulan Ini', value: 'Rp 450.000.000', icon: <AccountBalanceIcon />, color: '#9c27b0' },
-  { title: 'Pertumbuhan', value: '+15%', icon: <TrendingUpIcon />, color: '#ed6c02' },
+  { title: 'Total Sekolah', value: '12', icon: <SchoolIcon fontSize="large" />, color: '#3A86FF', bg: '#EFF5FF' },
+  { title: 'Total Siswa', value: '3,450', icon: <PeopleIcon fontSize="large" />, color: '#38B000', bg: '#F1F9EE' },
+  { title: 'Total Pemasukan', value: 'Rp 450 Juta', icon: <AccountBalanceIcon fontSize="large" />, color: '#8338EC', bg: '#F6F0FE' },
+  { title: 'Pertumbuhan', value: '+15%', icon: <TrendingUpIcon fontSize="large" />, color: '#FF006E', bg: '#FFECF3' },
 ]
 
-/**
- * Komponen Dashboard Super Admin
- * 
- * @component
- * @returns {JSX.Element} Halaman dashboard super admin
- */
 export default function SuperAdminDashboard() {
-  // Mengambil data user dari context authentication
   const { user } = useAuth()
 
-  // Mengambil tema untuk styling responsive
-  const theme = useTheme()
-
-  // Mengecek apakah layar mobile (breakpoint 900px)
-  const isMobile = useMediaQuery(theme.breakpoints.down(900))
-
   return (
-    // Container utama dengan width penuh dan overflow terkontrol
-    <Box sx={{
-      width: '100%',
-      maxWidth: '100%',
-      overflow: 'hidden',
-      boxSizing: 'border-box',
-    }}>
-      {/* Judul halaman Dashboard */}
-      <Typography
-        variant="h4"
-        gutterBottom
-        fontWeight="bold"
-        sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' } }}
-      >
-        Dashboard Super Admin
-      </Typography>
-
-      {/* Salam selamat datang untuk user yang login */}
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        gutterBottom
-        sx={{ mb: 4, fontSize: { xs: '0.875rem', sm: '1rem' } }}
-      >
-        Selamat datang, {user?.nama_lengkap}
-      </Typography>
-
-      {/* Container 1: Kartu Statistik - Layout Horizontal */}
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
+    <Box sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden', pb: 4 }}>
+      {/* Welcome Banner */}
+      <Box
         sx={{
-          mb: { xs: 3, md: 4 },
-          width: '100%',
-          margin: 0,
-          padding: 0,
-          boxSizing: 'border-box',
+          background: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 100%)',
+          borderRadius: 3,
+          p: { xs: 3, md: 4 },
+          mb: 4,
+          color: 'white',
+          boxShadow: '0 8px 32px rgba(21, 101, 192, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 3,
+          position: 'relative',
+          overflow: 'hidden'
         }}
       >
-        {/* Loop melalui setiap data statistik */}
+        <Box sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+          <Avatar
+            sx={{
+              width: { xs: 64, md: 80 },
+              height: { xs: 64, md: 80 },
+              bgcolor: 'white',
+              color: '#0F172A',
+              fontSize: { xs: '2rem', md: '2.5rem' },
+              fontWeight: '800',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+            }}
+          >
+            {user?.nama_lengkap?.charAt(0) || 'S'}
+          </Avatar>
+          <Box>
+            <Typography variant="h4" fontWeight="800" gutterBottom sx={{ fontSize: { xs: '1.75rem', md: '2.125rem' }, letterSpacing: '-0.5px' }}>
+              Super Admin Area
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.8, fontWeight: 400, color: '#94A3B8' }}>
+              Selamat datang kembali, <Box component="span" fontWeight="700" color="white">{user?.nama_lengkap}</Box>
+            </Typography>
+          </Box>
+        </Box>
+        {/* Background Decorative Icon */}
+        <ShieldIcon sx={{ 
+          position: 'absolute', 
+          right: -20, 
+          top: -30, 
+          fontSize: 240, 
+          opacity: 0.05,
+          color: 'white',
+          transform: 'rotate(10deg)'
+        }} />
+      </Box>
+
+      {/* Kartu Statistik */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {statsCards.map((stat, index) => (
-          // Grid item untuk setiap kartu
-          // Responsive: 12 col mobile, 6 tablet, 3 desktop
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-            {/* Card dengan height penuh */}
+          <Grid item xs={12} sm={6} md={3} key={index}>
             <Card
+              elevation={0}
               sx={{
-                height: '100%',
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: 'divider',
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                alignItems: 'center',
+                p: { xs: 2.5, md: 3 },
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 12px 24px rgba(0,0,0,0.06)',
+                  borderColor: stat.color
+                }
               }}
             >
-              {/* Konten card dengan padding responsive */}
-              <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
-                {/* Layout horizontal: teks di kiri, icon di kanan */}
-                <Box sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 2,
-                }}>
-                  {/* Bagian teks (label dan value) */}
-                  <Box sx={{ flexGrow: 1 }}>
-                    {/* Label statistik */}
-                    <Typography
-                      color="text.secondary"
-                      variant="body2"
-                      gutterBottom
-                      sx={{
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        fontWeight: 500,
-                        mb: 1,
-                      }}
-                    >
-                      {stat.title}
-                    </Typography>
-                    {/* Value statistik dengan font besar */}
-                    <Typography
-                      variant="h4"
-                      fontWeight="bold"
-                      sx={{
-                        fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' },
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {stat.value}
-                    </Typography>
-                  </Box>
-
-                  {/* Icon box dengan background berwarna */}
-                  <Box
-                    sx={{
-                      width: { xs: 50, sm: 56 },
-                      height: { xs: 50, sm: 56 },
-                      borderRadius: 3,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      bgcolor: stat.color,
-                      color: 'white',
-                      flexShrink: 0,
-                      boxShadow: 2,
-                    }}
-                  >
-                    {stat.icon}
-                  </Box>
-                </Box>
-              </CardContent>
+              <Avatar sx={{ bgcolor: stat.bg, color: stat.color, width: 64, height: 64, mr: 2 }}>
+                {stat.icon}
+              </Avatar>
+              <Box>
+                <Typography variant="h4" fontWeight="800" sx={{ color: 'text.primary', lineHeight: 1.2 }}>
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" fontWeight="600" sx={{ mt: 0.5 }}>
+                  {stat.title}
+                </Typography>
+              </Box>
             </Card>
           </Grid>
         ))}
       </Grid>
 
-      {/* Container 2: Grafik dan Aktivitas */}
-      <Grid container spacing={{ xs: 2, md: 3 }}>
-        {/* Grafik Pemasukan vs Pengeluaran (50% width di desktop) */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 }, height: { xs: 250, sm: 300 } }}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-            >
-              Grafik Pemasukan vs Pengeluaran
-            </Typography>
-            {/* Placeholder untuk grafik */}
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              height: '80%', 
-              color: 'text.secondary' 
-            }}>
-              [Grafik akan ditampilkan di sini]
-            </Box>
-          </Paper>
+      {/* Grafik dan Aktivitas */}
+      <Grid container spacing={4}>
+        {/* Grafik Pemasukan vs Pengeluaran */}
+        <Grid item xs={12} md={7}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <Paper elevation={0} sx={{ p: 3, height: 320, borderRadius: 3, border: '1px solid', borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <ShowChartIcon color="primary" /> Revenue Dynamics
+              </Typography>
+              <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', borderRadius: 2, mt: 1, border: '1px dashed', borderColor: 'grey.300' }}>
+                <Typography variant="body2" color="text.secondary" fontWeight="500">
+                  [Grafik Arus Kas Seluruh Cabang Sekolah Akan Tampil Di Sini]
+                </Typography>
+              </Box>
+            </Paper>
+
+            <Paper elevation={0} sx={{ p: 3, height: 320, borderRadius: 3, border: '1px solid', borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <SchoolIcon sx={{ color: '#8338EC' }} /> Top Performing Schools
+              </Typography>
+              <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', borderRadius: 2, mt: 1, border: '1px dashed', borderColor: 'grey.300' }}>
+                <Typography variant="body2" color="text.secondary" fontWeight="500">
+                  [Tabel atau Chart Cabang Sekolah Resolusi Tinggi Akan Tampil Di Sini]
+                </Typography>
+              </Box>
+            </Paper>
+          </Box>
         </Grid>
 
-        {/* Statistik Sekolah (50% width di desktop) */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 }, height: { xs: 250, sm: 300 } }}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-            >
-              Statistik Sekolah
-            </Typography>
-            {/* Placeholder untuk chart statistik */}
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              height: '80%', 
-              color: 'text.secondary' 
-            }}>
-              [Chart statistik sekolah akan ditampilkan di sini]
-            </Box>
-          </Paper>
-        </Grid>
-
-        {/* Aktivitas Terbaru (100% width - full row) */}
-        <Grid size={{ xs: 12 }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1rem', sm: '1.125rem' } }}
-            >
-              Aktivitas Terbaru
+        {/* Aktivitas Terbaru */}
+        <Grid item xs={12} md={5}>
+          <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', height: '100%', minHeight: 400 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3 }}>
+              History Aktivitas Sistem
             </Typography>
             
-            {/* List aktivitas terbaru */}
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {[
-                { text: 'SMA Negeri 1 Jakarta menambahkan 50 siswa baru', time: '5 menit yang lalu' },
-                { text: 'Pembayaran SPP dari SMK Merdeka senilai Rp 25.000.000', time: '15 menit yang lalu' },
-                { text: 'Guru baru ditambahkan di SMP Harapan Bangsa', time: '1 jam yang lalu' },
-                { text: 'Laporan bulanan berhasil digenerate', time: '2 jam yang lalu' },
+                { title: 'SMA Negeri 1 Jakarta menambahkan 50 siswa baru', time: '5 mnt lalu', type: 'info' },
+                { title: 'Pembayaran SPP dari SMK Merdeka senilai Rp 25Jt', time: '15 mnt lalu', type: 'success' },
+                { title: 'Guru baru diregistrasi di SMP Harapan Bangsa', time: '1 jam lalu', type: 'info' },
+                { title: 'Laporan keuangan bulanan berhasil dicetak', time: '2 jam lalu', type: 'default' },
+                { title: 'Sistem mengalami backup otomatis', time: '5 jam lalu', type: 'warning' },
+                { title: 'Admin TU SMA N 1 mengupdate struktur SPP', time: '1 hari lalu', type: 'info' },
               ].map((activity, index) => (
-                // Item aktivitas dengan border separator
                 <Box
                   key={index}
                   sx={{
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    py: 1.5,
-                    borderBottom: index < 3 ? '1px solid' : 'none',
-                    borderColor: 'divider',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: { xs: 0.5, sm: 0 },
+                    alignItems: 'flex-start',
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: '#f8fafc',
+                    border: '1px solid',
+                    borderColor: 'grey.200',
+                    transition: 'border-color 0.2s',
+                    '&:hover': { borderColor: 'grey.400' }
                   }}
                 >
-                  {/* Deskripsi aktivitas */}
-                  <Typography variant="body2" sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}>
-                    {activity.text}
-                  </Typography>
-                  {/* Waktu aktivitas */}
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                  >
-                    {activity.time}
-                  </Typography>
+                  <Box sx={{ 
+                    width: 8, height: 8, borderRadius: '50%', mt: 0.75, mr: 2, flexShrink: 0,
+                    bgcolor: activity.type === 'info' ? 'primary.main' : 
+                             activity.type === 'success' ? 'success.main' :
+                             activity.type === 'warning' ? 'warning.main' : 'grey.400'
+                  }} />
+                  <Box>
+                    <Typography variant="body2" fontWeight="600" color="text.primary" sx={{ mb: 0.5, lineHeight: 1.4 }}>
+                      {activity.title}
+                    </Typography>
+                    <Typography variant="caption" fontWeight="500" color="text.secondary">
+                      {activity.time}
+                    </Typography>
+                  </Box>
                 </Box>
               ))}
             </Box>

@@ -18,13 +18,14 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled'
 import CancelIcon from '@mui/icons-material/Cancel'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import HandshakeIcon from '@mui/icons-material/Handshake'
 
 export default function KinerjaGuru() {
   const summaryCards = [
-    { title: 'Total Guru Aktif', count: '156', icon: <PeopleIcon />, color: '#1565C0', bg: '#E3F2FD' },
-    { title: 'Rata-rata Pengisian', count: '89%', icon: <CheckCircleIcon />, color: '#2E7D32', bg: '#E8F5E9' },
-    { title: 'Guru Terlambat Input', count: '12', icon: <AccessTimeFilledIcon />, color: '#E65100', bg: '#FFF3E0' },
-    { title: 'Guru Tidak Input Jurnal', count: '5', icon: <CancelIcon />, color: '#C62828', bg: '#FFEBEE' },
+    { title: 'Pegawai Guru Aktif', count: '156', icon: <PeopleIcon fontSize="large" />, color: '#3B82F6', bg: '#EFF6FF' },
+    { title: 'Indeks Kepatuhan', count: '89%', icon: <CheckCircleIcon fontSize="large" />, color: '#10B981', bg: '#F0FDF4' },
+    { title: 'Teguran Keterlambatan', count: '12', icon: <AccessTimeFilledIcon fontSize="large" />, color: '#F59E0B', bg: '#FFFBEB' },
+    { title: 'Insubordinasi Tugas', count: '5', icon: <CancelIcon fontSize="large" />, color: '#EF4444', bg: '#FEF2F2' },
   ]
 
   const guruData = [
@@ -36,139 +37,113 @@ export default function KinerjaGuru() {
   ]
 
   return (
-    <Box sx={{ pb: 4 }}>
-      {/* Header */}
-      <Typography variant="h4" fontWeight="800" gutterBottom sx={{ color: '#1565C0' }}>
-        Kinerja Guru
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4, fontWeight: 500 }}>
-        Monitoring kinerja guru dalam mengisi jurnal dan aktivitas mengajar
-      </Typography>
+    <Box sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden', pb: 4 }}>
+      {/* Premium Dark Slate Header */}
+      <Box sx={{
+        p: { xs: 3, md: 4 },
+        mb: 4,
+        borderRadius: 3,
+        background: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 100%)',
+        color: 'white',
+        boxShadow: '0 10px 30px -10px rgba(21, 101, 192, 0.4)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <Box sx={{ position: 'relative', zIndex: 2 }}>
+          <Typography variant="h4" fontWeight="800" sx={{ mb: 1, fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
+            Supervisi & Monitoring Kinerja Guru
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.8, fontWeight: 500 }}>
+            Audit kepatuhan pengisian jurnal kelas, kehadiran mengajar, dan tracking kedisiplinan sentral
+          </Typography>
+        </Box>
+        <HandshakeIcon sx={{ 
+          position: 'absolute', 
+          right: -10, 
+          top: -30, 
+          fontSize: 220, 
+          opacity: 0.05,
+          transform: 'rotate(-5deg)'
+        }} />
+      </Box>
 
       {/* Summary Cards */}
-      <Box 
-        sx={{ 
-          display: 'grid', 
-          gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, 
-          gap: 2, 
-          mb: 4 
-        }}
-      >
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 3, mb: 4 }}>
         {summaryCards.map((card, index) => (
           <Card 
-            key={index} 
-            elevation={0}
+            key={index} elevation={0}
             sx={{ 
-              borderRadius: 3, 
-              border: '1px solid', 
-              borderColor: 'divider',
-              display: 'flex',
-              alignItems: 'center',
-              p: 2.5,
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-                borderColor: card.color
-              }
+              borderRadius: 3, border: '1px solid', borderColor: 'divider', display: 'flex', flexDirection: 'column', p: 3,
+              transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 24px rgba(0,0,0,0.05)', borderColor: card.color }
             }}
           >
-            <Avatar sx={{ bgcolor: card.bg, color: card.color, width: 56, height: 56, mr: 2 }}>
-              {card.icon}
-            </Avatar>
-            <Box>
-              <Typography variant="h4" fontWeight="800" color={card.color}>
-                {card.count}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" fontWeight="600" sx={{ lineHeight: 1.2 }}>
-                {card.title}
-              </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Avatar sx={{ bgcolor: card.bg, color: card.color, width: 56, height: 56 }}>{card.icon}</Avatar>
             </Box>
+            <Typography variant="h3" fontWeight="800" color="#0F172A" sx={{ mb: 0.5 }}>{card.count}</Typography>
+            <Typography variant="body2" color="text.secondary" fontWeight="700">{card.title}</Typography>
           </Card>
         ))}
       </Box>
 
       {/* Table Ranking */}
       <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-        <Box sx={{ p: 2.5, borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc', display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ p: 2.5, borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#f8fafc', display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <EmojiEventsIcon sx={{ color: '#F59E0B' }} />
-          <Typography variant="h6" fontWeight="700" color="#334155">
-            Ranking Kinerja Guru Bulan Ini
-          </Typography>
+          <Typography variant="h6" fontWeight="800" color="#0F172A">Leaderboard Integritas Guru Nasional</Typography>
         </Box>
         
         <TableContainer>
           <Table sx={{ minWidth: 700 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', color: '#64748b' }}>Peringkat</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#64748b' }}>Nama Guru</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#64748b' }}>Sekolah</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#64748b' }}>Jurnal Terisi</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold', color: '#64748b' }}>Ketepatan Waktu</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold', color: '#64748b' }}>Rating</TableCell>
+             <TableHead>
+              <TableRow sx={{ backgroundColor: 'transparent' }}>
+                 <TableCell width="80" align="center" sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Rank</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Identitas Pegawai Terverifikasi</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Satelit Kerja (Afiliasi Cabang)</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Target Penyelesaian Jurnal</TableCell>
+                 <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Indeks Ketepatan</TableCell>
+                 <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Skor Mutu SDM</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
               {guruData.map((guru, index) => {
-                // Determine rank colors: Gold, Silver, Bronze
                 let rankBg = 'transparent'
                 let rankColor = '#64748b'
-                let rankBorder = '1px solid #e2e8f0'
+                let rankBorder = '1px dashed #cbd5e1'
                 
-                if (index === 0) { rankBg = '#F59E0B'; rankColor = '#fff'; rankBorder = 'none' } // Gold
-                else if (index === 1) { rankBg = '#94A3B8'; rankColor = '#fff'; rankBorder = 'none' } // Silver
-                else if (index === 2) { rankBg = '#B45309'; rankColor = '#fff'; rankBorder = 'none' } // Bronze
+                if (index === 0) { rankBg = '#FEF3C7'; rankColor = '#D97706'; rankBorder = '1px solid #FDE68A' } // Gold
+                else if (index === 1) { rankBg = '#F1F5F9'; rankColor = '#475569'; rankBorder = '1px solid #E2E8F0' } // Silver
+                else if (index === 2) { rankBg = '#FFEDD5'; rankColor = '#C2410C'; rankBorder = '1px solid #FED7AA' } // Bronze
 
                 const tepatColor = parseInt(guru.tepat) >= 90 ? '#10B981' : parseInt(guru.tepat) >= 80 ? '#F59E0B' : '#EF4444'
 
                 return (
-                  <TableRow key={index} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          width: 32, height: 32, borderRadius: '50%',
-                          bgcolor: rankBg, color: rankColor, border: rankBorder,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontWeight: '800', fontSize: '0.9rem'
-                        }}
-                      >
+                  <TableRow key={index} hover sx={{ '&:last-child td': { border: 0 }, transition: 'background-color 0.2s' }}>
+                    <TableCell align="center">
+                      <Box sx={{ width: 36, height: 36, borderRadius: '50%', mx: 'auto', bgcolor: rankBg, color: rankColor, border: rankBorder, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '1rem', boxShadow: index < 3 ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}>
                         {index + 1}
                       </Box>
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 600, color: '#1E293B' }}>{guru.nama}</TableCell>
-                    <TableCell sx={{ color: '#475569' }}>{guru.sekolah}</TableCell>
+                    <TableCell sx={{ fontWeight: 800, color: '#0F172A' }}>{guru.nama}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'text.secondary' }}>{guru.sekolah}</TableCell>
 
-                    <TableCell sx={{ minWidth: 200 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <TableCell sx={{ minWidth: 200, pr: 4 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <LinearProgress
                           variant="determinate"
                           value={(guru.jurnal / 24) * 100}
-                          sx={{ 
-                            flexGrow: 1, height: 8, borderRadius: 4,
-                            bgcolor: '#f1f5f9',
-                            '& .MuiLinearProgress-bar': { borderRadius: 4, bgcolor: '#3B82F6' }
-                          }}
+                          sx={{ flexGrow: 1, height: 8, borderRadius: 4, bgcolor: '#f1f5f9', '& .MuiLinearProgress-bar': { borderRadius: 4, bgcolor: '#0F172A' } }}
                         />
-                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#3B82F6', minWidth: 40 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F172A', minWidth: 40 }}>
                           {guru.jurnal}/24
                         </Typography>
                       </Box>
                     </TableCell>
 
                     <TableCell align="center">
-                      <Box
-                        component="span"
-                        sx={{
-                          color: tepatColor,
-                          bgcolor: tepatColor + '15',
-                          px: 1.5, py: 0.5, borderRadius: 2,
-                          fontWeight: 'bold', fontSize: '0.85rem',
-                          border: `1px solid ${tepatColor}40`
-                        }}
-                      >
+                      <Box component="span" sx={{ color: tepatColor, bgcolor: tepatColor + '15', px: 2, py: 0.5, borderRadius: '50px', fontWeight: '800', fontSize: '0.85rem', border: `1px solid ${tepatColor}40` }}>
                         {guru.tepat}
                       </Box>
                     </TableCell>

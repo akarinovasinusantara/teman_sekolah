@@ -1,27 +1,3 @@
-/**
- * =============================================
- * MANAJEMEN SEKOLAH - SUPER ADMIN
- * =============================================
- * 
- * Komponen: ManajemenSekolah
- * File: /frontend/src/pages/super-admin/ManajemenSekolah.jsx
- * 
- * Deskripsi:
- * Halaman untuk mengelola data sekolah (CRUD).
- * Super Admin dapat menambah, mengedit, dan menghapus data sekolah.
- * 
- * Fitur:
- * - Tampilan tabel (desktop) / card (mobile) untuk daftar sekolah
- * - Tambah sekolah baru via dialog
- * - Edit data sekolah
- * - Hapus sekolah
- * - Status sekolah (Aktif/Non-Aktif)
- * - Responsive design untuk mobile & desktop
- * 
- * Role: Super Admin only
- * Route: /super-admin/sekolah
- */
-
 import { useState } from 'react'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
@@ -49,18 +25,8 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import DomainIcon from '@mui/icons-material/Domain'
 
-/**
- * Data dummy sekolah untuk demo
- * Dalam implementasi nyata, data ini diambil dari API
- * 
- * @constant {Array<Object>}
- * @property {number} id - ID unik sekolah
- * @property {string} nama - Nama sekolah
- * @property {string} npsn - NPSN sekolah
- * @property {string} alamat - Alamat sekolah
- * @property {string} status - Status: Aktif atau Non-Aktif
- */
 const dummySekolah = [
   { id: 1, nama: 'SMA Negeri 1 Jakarta', npsn: '10101010', alamat: 'Jakarta Pusat', status: 'Aktif' },
   { id: 2, nama: 'SMP Harapan Bangsa', npsn: '20202020', alamat: 'Jakarta Selatan', status: 'Aktif' },
@@ -68,161 +34,144 @@ const dummySekolah = [
   { id: 4, nama: 'SD Tunas Muda', npsn: '40404040', alamat: 'Jakarta Timur', status: 'Non-Aktif' },
 ]
 
-/**
- * Komponen Manajemen Sekolah
- * 
- * @component
- * @returns {JSX.Element} Halaman manajemen sekolah
- */
 export default function ManajemenSekolah() {
-  // Hook untuk responsive design
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(900))
-  
-  // State management
-  const [open, setOpen] = useState(false)              // State untuk dialog tambah sekolah
-  const [sekolah, setSekolah] = useState(dummySekolah) // State untuk daftar sekolah
+  const [open, setOpen] = useState(false)
+  const [sekolah, setSekolah] = useState(dummySekolah)
 
   return (
-    <Box>
-      {/* Header: Judul dan Tombol Tambah */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 3,
-          flexDirection: { xs: 'column', sm: 'row' },
-          gap: { xs: 2, sm: 0 },
-        }}
-      >
-        {/* Judul halaman */}
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          sx={{
-            fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+    <Box sx={{ width: '100%', maxWidth: '100%', overflow: 'hidden', pb: 4 }}>
+      {/* Premium Dark Slate Header */}
+      <Box sx={{
+        p: { xs: 3, md: 4 },
+        mb: 4,
+        borderRadius: 3,
+        background: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 100%)',
+        color: 'white',
+        boxShadow: '0 10px 30px -10px rgba(21, 101, 192, 0.4)',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'flex-start', sm: 'center' },
+        gap: 3
+      }}>
+        <Box sx={{ position: 'relative', zIndex: 2 }}>
+          <Typography variant="h4" fontWeight="800" sx={{ mb: 1, fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
+            Manajemen Institusi Sekolah
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.8, fontWeight: 500 }}>
+            Master data cabang sekolah dalam naungan sistem pusat
+          </Typography>
+        </Box>
+        <Button 
+          variant="contained" 
+          startIcon={<AddIcon />} 
+          onClick={() => setOpen(true)}
+          sx={{ 
+            backgroundColor: '#ffffff !important', 
+            color: '#1565C0 !important', 
+            fontWeight: '800',
+            borderRadius: 2,
+            px: 3,
+            '&:hover': { 
+              backgroundColor: '#f1f5f9 !important',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
+            },
+            transition: 'all 0.2s',
+            zIndex: 2,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+            whiteSpace: 'nowrap'
           }}
         >
-          Manajemen Sekolah
-        </Typography>
-        
-        {/* Tombol Tambah Sekolah */}
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setOpen(true)}
-          fullWidth={isMobile}
-        >
-          Tambah Sekolah
+          Integrasi Sekolah Baru
         </Button>
+        <DomainIcon sx={{ 
+          position: 'absolute', 
+          right: -10, 
+          top: -30, 
+          fontSize: 220, 
+          opacity: 0.05,
+          transform: 'rotate(-5deg)'
+        }} />
       </Box>
 
-      {/* Render berdasarkan device: Desktop (Table) atau Mobile (Card) */}
       {!isMobile ? (
-        // Desktop: Table View
-        <TableContainer component={Paper}>
-          <Table>
-            {/* Header tabel */}
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>No</TableCell>
-                <TableCell sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>Nama Sekolah</TableCell>
-                <TableCell sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>NPSN</TableCell>
-                <TableCell sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>Alamat</TableCell>
-                <TableCell sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>Status</TableCell>
-                <TableCell sx={{ fontSize: '0.875rem', fontWeight: 'bold' }}>Aksi</TableCell>
-              </TableRow>
-            </TableHead>
-            
-            {/* Body tabel dengan data sekolah */}
-            <TableBody>
-              {sekolah.map((row, index) => (
-                <TableRow key={row.id} hover>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{index + 1}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{row.nama}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{row.npsn}</TableCell>
-                  <TableCell sx={{ fontSize: '0.875rem' }}>{row.alamat}</TableCell>
-                  <TableCell>
-                    {/* Badge status dengan warna kondisional */}
-                    <Box
-                      component="span"
-                      sx={{
-                        px: 1.5,
-                        py: 0.5,
-                        borderRadius: 1,
-                        bgcolor: row.status === 'Aktif' ? 'success.light' : 'error.light',
-                        color: row.status === 'Aktif' ? 'success.dark' : 'error.dark',
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {row.status}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    {/* Tombol aksi: Edit & Delete */}
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <IconButton size="small" color="primary" aria-label="edit">
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton size="small" color="error" aria-label="hapus">
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
+        <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
+           <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#f8fafc' }}>
+                  <TableCell width="50" sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>No</TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Nama Instansi Sekolah</TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Nomor NPSN</TableCell>
+                  <TableCell sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Alamat Operasional</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Status Aktif</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700, color: '#475569', borderBottom: '2px solid', borderColor: 'grey.200' }}>Manajemen</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {sekolah.map((row, index) => (
+                  <TableRow key={row.id} hover sx={{ '&:last-child td': { border: 0 }, transition: 'background-color 0.2s' }}>
+                    <TableCell sx={{ fontWeight: 600 }}>{index + 1}</TableCell>
+                    <TableCell sx={{ fontWeight: 800, color: '#0F172A' }}>{row.nama}</TableCell>
+                    <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>{row.npsn}</TableCell>
+                    <TableCell sx={{ color: 'text.secondary', fontWeight: 500 }}>{row.alamat}</TableCell>
+                    <TableCell align="center">
+                      <Box sx={{ 
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                          px: 2, py: 0.5, borderRadius: '50px',
+                          bgcolor: row.status === 'Aktif' ? 'success.50' : 'error.50',
+                          color: row.status === 'Aktif' ? 'success.700' : 'error.700',
+                          border: '1px solid',
+                          borderColor: row.status === 'Aktif' ? 'success.200' : 'error.200',
+                          fontWeight: 'bold', fontSize: '0.75rem', minWidth: 90
+                        }}>
+                        {row.status}
+                      </Box>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                        <IconButton size="small" color="info" sx={{ bgcolor: 'info.50' }}>
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton size="small" color="error" sx={{ bgcolor: 'error.50' }}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       ) : (
-        // Mobile: Card View
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {sekolah.map((row, index) => (
-            <Card key={row.id} sx={{ boxShadow: 2 }}>
+          {sekolah.map((row) => (
+            <Card key={row.id} elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
               <CardContent sx={{ p: 2 }}>
-                {/* Header card: Nama sekolah & status */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                  <Typography variant="subtitle1" fontWeight="bold" sx={{ flexGrow: 1, mr: 2 }}>
-                    {row.nama}
-                  </Typography>
-                  {/* Badge status */}
-                  <Box
-                    component="span"
-                    sx={{
-                      px: 1,
-                      py: 0.25,
-                      borderRadius: 1,
-                      bgcolor: row.status === 'Aktif' ? 'success.light' : 'error.light',
-                      color: row.status === 'Aktif' ? 'success.dark' : 'error.dark',
-                      fontSize: '0.65rem',
-                      fontWeight: 'bold',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <Typography variant="subtitle1" fontWeight="800" sx={{ pr: 2, color: '#0F172A' }}>{row.nama}</Typography>
+                  <Box sx={{ 
+                      display: 'inline-flex', px: 1, py: 0.25, borderRadius: '50px',
+                      bgcolor: row.status === 'Aktif' ? 'success.50' : 'error.50',
+                      color: row.status === 'Aktif' ? 'success.700' : 'error.700',
+                      border: '1px solid', borderColor: row.status === 'Aktif' ? 'success.200' : 'error.200',
+                      fontWeight: 'bold', fontSize: '0.65rem', whiteSpace: 'nowrap'
+                    }}>
                     {row.status}
                   </Box>
                 </Box>
-                
-                {/* Info: NPSN & Alamat */}
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                  NPSN: {row.npsn}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                  {row.alamat}
-                </Typography>
-                
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontWeight: 600 }}>NPSN: {row.npsn}</Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{row.alamat}</Typography>
                 <Divider sx={{ mb: 1.5 }} />
-                
-                {/* Tombol aksi */}
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                  <IconButton size="small" color="primary" aria-label="edit">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton size="small" color="error" aria-label="hapus">
-                    <DeleteIcon />
-                  </IconButton>
+                  <Button size="small" variant="outlined" startIcon={<EditIcon />} sx={{ borderRadius: 2 }}>Edit</Button>
+                  <Button size="small" variant="contained" color="error" sx={{ borderRadius: 2, minWidth:0, px:2 }}><DeleteIcon fontSize="small" /></Button>
                 </Box>
               </CardContent>
             </Card>
@@ -230,91 +179,29 @@ export default function ManajemenSekolah() {
         </Box>
       )}
 
-      {/* Dialog Tambah Sekolah */}
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        fullScreen={isMobile}
-      >
-        <DialogTitle
-          sx={{
-            fontSize: isMobile ? '1.25rem' : '1.5rem',
-            fontWeight: 'bold',
-            pr: 6,
-          }}
-        >
-          Tambah Sekolah
+      {/* Dialog */}
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth fullScreen={isMobile} PaperProps={{ sx: { borderRadius: isMobile ? 0 : 3 } }}>
+        <DialogTitle sx={{ fontWeight: '800', borderBottom: '1px solid', borderColor: 'divider', pb: 2, pt: 3, px: 4, bgcolor: '#0F172A', color: 'white' }}>
+          Integrasi Data Sekolah Baru
+          <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', right: 16, top: 16, color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
-        
-        {/* Tombol Close di pojok kanan atas */}
-        <IconButton
-          onClick={() => setOpen(false)}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: 'text.secondary',
-          }}
-          aria-label="close"
-        >
-          <CloseIcon />
-        </IconButton>
-        
-        {/* Konten dialog dengan form */}
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            <TextField
-              fullWidth
-              label="Nama Sekolah"
-              required
-              sx={{ '& .MuiInputBase-input': { fontSize: isMobile ? '1rem' : '0.875rem' } }}
-            />
-            <TextField
-              fullWidth
-              label="NPSN"
-              required
-              sx={{ '& .MuiInputBase-input': { fontSize: isMobile ? '1rem' : '0.875rem' } }}
-            />
-            <TextField
-              fullWidth
-              label="Alamat"
-              multiline
-              rows={isMobile ? 4 : 3}
-              required
-              sx={{ '& .MuiInputBase-input': { fontSize: isMobile ? '1rem' : '0.875rem' } }}
-            />
-            <TextField
-              fullWidth
-              select
-              SelectProps={{ native: true }}
-              label="Status"
-              required
-              sx={{ '& .MuiInputBase-input': { fontSize: isMobile ? '1rem' : '0.875rem' } }}
-            >
-              <option value="Aktif">Aktif</option>
-              <option value="Non-Aktif">Non-Aktif</option>
+        <DialogContent sx={{ p: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
+            <TextField fullWidth label="Nama Instansi Sekolah Resmi" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+            <TextField fullWidth label="Nomor Pokok Sekolah Nasional (NPSN)" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+            <TextField fullWidth label="Alamat Operasional/Jalan" multiline rows={3} required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+            <TextField fullWidth select SelectProps={{ native: true }} label="Status Database" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
+              <option value="Aktif">Sekolah Aktif (Termonitor)</option>
+              <option value="Non-Aktif">Non-Aktif/Suspended</option>
             </TextField>
           </Box>
         </DialogContent>
-        
-        {/* Footer dialog dengan tombol Batal & Simpan */}
-        <DialogActions
-          sx={{
-            p: isMobile ? 2 : 3,
-            flexDirection: isMobile ? 'column-reverse' : 'row',
-            gap: 1,
-            '& .MuiButton-root': {
-              minWidth: isMobile ? '100%' : 'auto',
-            },
-          }}
-        >
-          <Button onClick={() => setOpen(false)} color="inherit">
-            Batal
-          </Button>
-          <Button variant="contained" onClick={() => setOpen(false)}>
-            Simpan
+        <DialogActions sx={{ p: 3, pt: 1, px: 4, bgcolor: '#f8fafc', borderTop: '1px solid', borderColor: 'divider' }}>
+          <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600, color: '#475569' }}>Batalkan</Button>
+          <Button variant="contained" sx={{ fontWeight: 600, px: 3, borderRadius: 2, bgcolor: '#0F172A', '&:hover': { bgcolor: '#1E293B' } }}>
+            Simpan Konfigurasi
           </Button>
         </DialogActions>
       </Dialog>
