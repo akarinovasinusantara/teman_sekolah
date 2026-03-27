@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { AuthContext } from '../../App'
+import { useAuth } from '../../../hooks/useAuth'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import AppBar from '@mui/material/AppBar'
@@ -18,10 +18,11 @@ import Avatar from '@mui/material/Avatar'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
+import Tooltip from '@mui/material/Tooltip'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 
-// Icons
+// ALL Icons
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import SchoolIcon from '@mui/icons-material/School'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
@@ -38,71 +39,18 @@ import MenuBookIcon from '@mui/icons-material/MenuBook'
 import MailIcon from '@mui/icons-material/Mail'
 import LogoutIcon from '@mui/icons-material/Logout'
 
-/**
- * =============================================
- * MAIN LAYOUT COMPONENT
- * =============================================
- * 
- * Komponen: MainLayout
- * File: /frontend/src/components/layout/MainLayout.jsx
- * 
- * Deskripsi:
- * Layout utama aplikasi yang digunakan di semua halaman.
- * Menyediakan navigasi sidebar dan top bar yang responsif.
- * 
- * Fitur:
- * - Sidebar navigation dengan menu berdasarkan role
- * - Top bar dengan user profile & logout
- * - Responsive design (mobile drawer & desktop sidebar)
- * - Active menu highlighting
- * - User info display
- * 
- * Struktur Layout:
- * 
- * ┌─────────────────────────────────────┐
- * │           TOP BAR (AppBar)          │
- * │  [Menu]  Sistem Manajemen Sekolah   │
- * │                            [Avatar] │
- * ├──────────┬──────────────────────────┤
- * │          │                          │
- * │  SIDEBAR │    MAIN CONTENT          │
- * │  - Menu  │    (children props)      │
- * │  - Menu  │                          │
- * │  - Menu  │                          │
- * │          │                          │
- * └──────────┴──────────────────────────┘
- */
-
 // Responsive breakpoints
 const MOBILE_BREAKPOINT = 900
 const drawerWidth = 260
+const collapsedWidth = 88
 
-/**
- * Konfigurasi menu berdasarkan role user
- * 
- * Setiap role memiliki menu yang berbeda sesuai dengan
- * hak akses dan fungsionalitas yang tersedia.
- * 
- * Format:
- * - text: Nama menu yang ditampilkan
- * - icon: Icon Material-UI
- * - path: Route path untuk navigasi
- */
 const menuByRole = {
-  /**
-   * SUPER ADMIN - Yayasan/Pengembang
-   * Akses: Full access ke semua fitur
-   */
   super_admin: [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/super-admin' },
     { text: 'Manajemen Sekolah', icon: <SchoolIcon />, path: '/super-admin/sekolah' },
     { text: 'Laporan Keuangan', icon: <AccountBalanceIcon />, path: '/super-admin/keuangan' },
     { text: 'Kinerja Guru', icon: <AssessmentIcon />, path: '/super-admin/kinerja' },
   ],
-  /**
-   * TU - Staf Tata Usaha
-   * Akses: Administrasi sekolah, PPDB, Keuangan
-   */
   tu: [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/tu' },
     { text: 'PPDB', icon: <SchoolIcon />, path: '/tu/ppdb' },
@@ -110,10 +58,6 @@ const menuByRole = {
     { text: 'Jadwal Pelajaran', icon: <EventIcon />, path: '/tu/jadwal' },
     { text: 'Surat Menyurat', icon: <DescriptionIcon />, path: '/tu/surat' },
   ],
-  /**
-   * GURU - Pengajar
-   * Akses: Absensi, Nilai, Rapor, Pengumuman
-   */
   guru: [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/guru' },
     { text: 'Absensi Siswa', icon: <CheckCircleIcon />, path: '/guru/absensi' },
@@ -121,10 +65,6 @@ const menuByRole = {
     { text: 'E-Rapor', icon: <MenuBookIcon />, path: '/guru/rapor' },
     { text: 'Pengumuman Kelas', icon: <AnnouncementIcon />, path: '/guru/pengumuman' },
   ],
-  /**
-   * ORANG TUA - Monitoring anak
-   * Akses: Pembayaran, Kehadiran, Nilai, Informasi
-   */
   ortu: [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/ortu' },
     { text: 'Pembayaran', icon: <PaymentIcon />, path: '/ortu/pembayaran' },
@@ -132,10 +72,6 @@ const menuByRole = {
     { text: 'Hasil Belajar', icon: <AssessmentIcon />, path: '/ortu/hasil-belajar' },
     { text: 'Informasi & Surat', icon: <MailIcon />, path: '/ortu/informasi' },
   ],
-  /**
-   * SISWA - Informasi pribadi
-   * Akses: Pembayaran, Kehadiran, Nilai, Informasi
-   */
   siswa: [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/siswa' },
     { text: 'Pembayaran', icon: <PaymentIcon />, path: '/siswa/pembayaran' },
@@ -145,72 +81,40 @@ const menuByRole = {
   ],
 }
 
-/**
- * Komponen MainLayout
- * 
- * @component
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Konten halaman yang akan ditampilkan
- * @returns {JSX.Element} Layout utama aplikasi
- */
 export default function MainLayout({ children }) {
-  // Ambil data user dan fungsi logout dari AuthContext
-  const { user, logout } = useContext(AuthContext)
-
-  // Hooks untuk navigasi dan routing
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-
-  // Hooks untuk responsive design
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(MOBILE_BREAKPOINT))
 
-  // State management
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [desktopOpen, setDesktopOpen] = useState(true)
   const [anchorEl, setAnchorEl] = useState(null)
 
-  // Debug: Log user data
-  console.log('MainLayout - User:', user)
-  console.log('MainLayout - User role:', user?.role)
-
-  /**
-   * Handle toggle mobile drawer
-   */
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
 
-  /**
-   * Handle buka user menu
-   */
+  const handleDesktopToggle = () => {
+    setDesktopOpen(!desktopOpen)
+  }
+
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
   }
 
-  /**
-   * Handle tutup user menu
-   */
   const handleMenuClose = () => {
     setAnchorEl(null)
   }
 
-  /**
-   * Handle logout
-   * Logout dan redirect ke halaman login
-   */
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
 
-  // Get menu items berdasarkan role user dengan fallback
   const menuItems = menuByRole[user?.role] || menuByRole['super_admin'] || []
 
-  /**
-   * Get label role user
-   * 
-   * @returns {string} Label role yang diformat
-   */
   const getRoleLabel = () => {
     if (!user?.role) return 'User'
     const roleLabels = {
@@ -223,150 +127,164 @@ export default function MainLayout({ children }) {
     return roleLabels[user.role] || 'User'
   }
 
-  // Render drawer content (sidebar)
+  const currentWidth = desktopOpen ? drawerWidth : collapsedWidth
+
   const drawer = (
-    <Box>
-      {/* Logo & Role Info */}
-      <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', py: 3 }}>
-        <SchoolIcon sx={{ fontSize: 48, color: 'primary.main' }} />
-        <Typography variant="h6" sx={{ mt: 1, fontWeight: 'bold' }}>
-          Teman Sekolah
-        </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, fontWeight: 500 }}>
-          {getRoleLabel()}
-        </Typography>
+    <Box sx={{ overflowX: 'hidden' }}>
+      <Toolbar sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        flexDirection: 'column', 
+        py: 3,
+        transition: theme.transitions.create('all')
+      }}>
+        <SchoolIcon sx={{ fontSize: desktopOpen ? 48 : 36, color: 'primary.main', transition: theme.transitions.create('font-size') }} />
+        <Box sx={{ 
+          height: desktopOpen ? 'auto' : 0, 
+          opacity: desktopOpen ? 1 : 0, 
+          overflow: 'hidden', 
+          transition: theme.transitions.create(['height', 'opacity']),
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
+          <Typography variant="h6" sx={{ mt: 1, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+            Teman Sekolah
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, fontWeight: 500, whiteSpace: 'nowrap' }}>
+            {getRoleLabel()}
+          </Typography>
+        </Box>
       </Toolbar>
       <Divider />
       
-      {/* Menu List */}
-      <List>
+      <List sx={{ px: desktopOpen ? 1 : 0.5 }}>
         {menuItems.map((item) => {
-          // Exact match untuk selected state
           const isSelected = location.pathname === item.path
 
           return (
-            <ListItem key={item.text} disablePadding>
-              <ListItemButton
-                onClick={() => navigate(item.path)}
-                selected={isSelected}
-                sx={{
-                  borderRadius: '10px',
-                  margin: '4px 12px',
-                  minHeight: '44px',
-                  // Default state - biru muda
-                  backgroundColor: isSelected ? 'rgba(55, 0, 179, 0.08)' : 'transparent',
-                  color: '#3700b3',
-                  '& .MuiListItemIcon-root': {
-                    color: isSelected ? '#3700b3' : '#6b7280',
-                  },
-                  // Hover state - putih
-                  '&:hover': {
-                    backgroundColor: '#ffffff',
+            <Tooltip title={!desktopOpen ? item.text : ''} placement="right" key={item.text}>
+              <ListItem disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  onClick={() => navigate(item.path)}
+                  selected={isSelected}
+                  sx={{
+                    borderRadius: '10px',
+                    margin: desktopOpen ? '4px 8px' : '4px auto',
+                    minHeight: '44px',
+                    padding: desktopOpen ? '8px 16px' : '8px 16px',
+                    justifyContent: desktopOpen ? 'flex-start' : 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    transition: 'all 0.2s',
+                    backgroundColor: isSelected ? 'rgba(55, 0, 179, 0.08)' : 'transparent',
+                    color: isSelected ? '#3700b3' : '#4b5563',
                     '& .MuiListItemIcon-root': {
-                      color: '#3700b3',
-                    },
-                  },
-                  // Selected state
-                  '&.Mui-selected': {
-                    backgroundColor: 'rgba(55, 0, 179, 0.08)',
-                    color: '#3700b3',
-                    '& .MuiListItemIcon-root': {
-                      color: '#3700b3',
+                      color: isSelected ? '#3700b3' : '#6b7280',
+                      minWidth: '40px',
+                      mr: desktopOpen ? 1 : 'auto',
+                      justifyContent: 'center',
                     },
                     '&:hover': {
-                      backgroundColor: '#ffffff',
+                      backgroundColor: isSelected ? 'rgba(55, 0, 179, 0.12)' : 'rgba(0, 0, 0, 0.04)',
+                      color: '#3700b3',
+                      '& .MuiListItemIcon-root': { color: '#3700b3' },
                     },
-                  },
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
+                    '&.Mui-selected': {
+                      backgroundColor: 'rgba(55, 0, 179, 0.08)',
+                      color: '#3700b3',
+                      '&.Mui-focusVisible': { backgroundColor: 'rgba(55, 0, 179, 0.12)' },
+                      '&:hover': { backgroundColor: 'rgba(55, 0, 179, 0.12)' },
+                    },
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText 
+                    primary={item.text} 
+                    primaryTypographyProps={{
+                      fontSize: '0.95rem',
+                      fontWeight: isSelected ? 600 : 500,
+                      lineHeight: 1.2,
+                      whiteSpace: 'nowrap'
+                    }}
+                    sx={{ 
+                      my: 0, 
+                      opacity: desktopOpen ? 1 : 0, 
+                      width: desktopOpen ? 'auto' : 0,
+                      display: desktopOpen ? 'block' : 'none',
+                      transition: theme.transitions.create(['opacity', 'width'])
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
           )
         })}
       </List>
     </Box>
   )
 
-  // Render layout utama
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       
-      {/* TOP BAR (AppBar) */}
       <AppBar
         position="fixed"
         sx={{
-          width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { xs: 0, sm: `${drawerWidth}px` },
+          width: { xs: '100%', sm: `calc(100% - ${currentWidth}px)` },
+          ml: { xs: 0, sm: `${currentWidth}px` },
           bgcolor: 'white',
           color: 'text.primary',
           boxShadow: 1,
+          transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
         }}
       >
         <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
-          {/* Mobile menu button */}
           <IconButton
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', sm: 'none' },
-              color: 'text.primary'
-            }}
+            sx={{ mr: 2, display: { xs: 'flex', sm: 'none' }, color: 'text.primary' }}
             aria-label="open drawer"
           >
             <MenuIcon />
           </IconButton>
+
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={handleDesktopToggle}
+            sx={{ mr: 2, display: { xs: 'none', sm: 'flex' }, color: 'text.primary' }}
+            aria-label="toggle drawer"
+          >
+            <MenuIcon />
+          </IconButton>
           
-          {/* Title */}
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{
-              flexGrow: 1,
-              fontSize: { xs: '1rem', sm: '1.25rem' }
-            }}
+            sx={{ flexGrow: 1, fontSize: { xs: '1rem', sm: '1.25rem' } }}
           >
             Sistem Manajemen Sekolah
           </Typography>
           
-          {/* User profile & menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-            <Typography
-              variant="body2"
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-                fontSize: { xs: '0.75rem', sm: '0.875rem' }
-              }}
-            >
+            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' }, fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
               {user?.username}
             </Typography>
             <IconButton onClick={handleMenuOpen} size="small">
-              <Avatar
-                sx={{
-                  width: { xs: 28, sm: 32 },
-                  height: { xs: 28, sm: 32 },
-                  bgcolor: 'primary.main'
-                }}
-              >
+              <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: 'primary.main' }}>
                 {user?.username?.charAt(0).toUpperCase()}
               </Avatar>
             </IconButton>
           </Box>
           
-          {/* User menu dropdown */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            PaperProps={{
-              sx: { minWidth: '150px' }
-            }}
-          >
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} PaperProps={{ sx: { minWidth: '150px' } }}>
             <MenuItem onClick={handleLogout}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Logout
@@ -375,13 +293,19 @@ export default function MainLayout({ children }) {
         </Toolbar>
       </AppBar>
       
-      {/* SIDEBAR NAVIGATION */}
       <Box
         component="nav"
-        sx={{ width: { xs: drawerWidth, sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { xs: drawerWidth, sm: currentWidth }, 
+          flexShrink: { sm: 0 },
+          transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+        }}
         aria-label="navigation menu"
       >
-        {/* Mobile drawer (temporary) */}
+        {/* Mobile drawer */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -389,28 +313,25 @@ export default function MainLayout({ children }) {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-            },
-          }}
-          PaperProps={{
-            sx: {
-              width: drawerWidth,
-            }
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
           {drawer}
         </Drawer>
         
-        {/* Desktop drawer (permanent) */}
+        {/* Desktop drawer */}
         <Drawer
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: currentWidth, 
+              overflowX: 'hidden',
+              transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+              }),
             },
           }}
           open
@@ -419,18 +340,21 @@ export default function MainLayout({ children }) {
         </Drawer>
       </Box>
       
-      {/* MAIN CONTENT */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3, md: 4 },
-          width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: '100%', sm: `calc(100% - ${currentWidth}px)` },
           mt: { xs: 7, sm: 8 },
           minHeight: 'calc(100vh - 64px)',
           maxWidth: '100%',
           overflowX: 'hidden',
           boxSizing: 'border-box',
+          transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
         }}
       >
         {children}

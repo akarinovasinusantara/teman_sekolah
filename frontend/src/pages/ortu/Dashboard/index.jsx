@@ -22,7 +22,7 @@
  */
 
 import { useContext } from 'react'
-import { AuthContext } from '../../App'
+import { useAuth } from '../../../hooks/useAuth'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
@@ -43,7 +43,7 @@ import { useTheme } from '@mui/material/styles'
  * @returns {JSX.Element} Halaman dashboard orang tua
  */
 export default function OrtuDashboard() {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(900))
 

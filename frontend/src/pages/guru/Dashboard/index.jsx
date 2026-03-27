@@ -22,7 +22,7 @@
  */
 
 import { useContext } from 'react'
-import { AuthContext } from '../../App'
+import { useAuth } from '../../../hooks/useAuth'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
@@ -67,7 +67,7 @@ const todaySchedule = [
  * @returns {JSX.Element} Halaman dashboard guru
  */
 export default function GuruDashboard() {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(900))
 

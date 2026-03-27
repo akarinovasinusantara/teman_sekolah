@@ -21,7 +21,7 @@
  */
 
 import { useContext } from 'react'
-import { AuthContext } from '../../App'
+import { useAuth } from '../../../hooks/useAuth'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
@@ -54,7 +54,7 @@ const statsCards = [
  * @returns {JSX.Element} Halaman dashboard TU
  */
 export default function TU_Dashboard() {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down(900))
 

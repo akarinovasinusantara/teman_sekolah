@@ -21,7 +21,7 @@
  */
 
 import { useContext } from 'react'
-import { AuthContext } from '../../App'
+import { useAuth } from '../../../hooks/useAuth'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
@@ -59,7 +59,7 @@ const statsCards = [
  */
 export default function SuperAdminDashboard() {
   // Mengambil data user dari context authentication
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
 
   // Mengambil tema untuk styling responsive
   const theme = useTheme()

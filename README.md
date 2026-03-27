@@ -265,7 +265,7 @@ Setelah menjalankan `npm run seed`, akun berikut tersedia:
 | 📝 TU | `tu_admin` | `tu123` | Administrasi |
 | 👨‍🏫 Guru | `guru_budi` | `guru123` | Mengajar |
 | 👨‍👩‍👧 Orang Tua | `ortu_ahmad` | `ortu123` | Monitoring |
-| 🎓 Siswa | `siswa_ahmad` | `siswa123` | Informasi |
+| 🎓 Siswa | ` ` | `siswa123` | Informasi |
 
 ---
 
