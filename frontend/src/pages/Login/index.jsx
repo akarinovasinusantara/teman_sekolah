@@ -39,45 +39,65 @@ export default function Login() {
     setError('')
     setLoading(true)
 
-    // Simulasi login dengan data dummy
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Simpan data (termasuk token) ke context & localStorage
+        login(data.data)
+        
+        // Redirect berdasarkan role
+        const role = data.data.user.role
+        switch (role) {
+          case 'super_admin': navigate('/super-admin'); break
+          case 'tu': navigate('/tu'); break
+          case 'guru': navigate('/guru'); break
+          case 'ortu': navigate('/ortu'); break
+          case 'siswa': navigate('/siswa'); break
+          default: navigate('/login')
+        }
+      } else {
+        setError(data.message || 'Username atau password salah')
+      }
+    } catch (err) {
+      console.warn('Backend login failed, falling back to dummy:', err)
+      // Fallback ke data dummy jika backend mati/error
       const user = dummyUsers.find(
         (u) => u.username === username && u.password === password
       )
 
       if (user) {
+        // Berikan token dummy agar Dashboard tidak crash saat mencoba parse
         login({
-          user_id: user.user_id,
-          username: user.username,
-          role: user.role,
-          nama_lengkap: user.nama_lengkap,
+          token: 'dummy-token-for-dev',
+          user: {
+            user_id: user.user_id,
+            username: user.username,
+            role: user.role,
+            nama_lengkap: user.nama_lengkap,
+          }
         })
         
-        // Redirect berdasarkan role
         switch (user.role) {
-          case 'super_admin':
-            navigate('/super-admin')
-            break
-          case 'tu':
-            navigate('/tu')
-            break
-          case 'guru':
-            navigate('/guru')
-            break
-          case 'ortu':
-            navigate('/ortu')
-            break
-          case 'siswa':
-            navigate('/siswa')
-            break
-          default:
-            navigate('/login')
+          case 'super_admin': navigate('/super-admin'); break
+          case 'tu': navigate('/tu'); break
+          case 'guru': navigate('/guru'); break
+          case 'ortu': navigate('/ortu'); break
+          case 'siswa': navigate('/siswa'); break
+          default: navigate('/login')
         }
       } else {
-        setError('Username atau password salah')
+        setError('Username atau password salah (Backend Offline)')
       }
+    } finally {
       setLoading(false)
-    }, 500)
+    }
   }
 
   return (

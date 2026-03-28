@@ -6,10 +6,7 @@ import Card from '@mui/material/Card'
 import IconButton from '@mui/material/IconButton'
 import DownloadIcon from '@mui/icons-material/Download'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import CustomDialog from '../../../components/common/CustomDialog'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
@@ -206,66 +203,58 @@ export default function InformasiSurat() {
       </Box>
 
       {/* Surat Detail Dialog */}
-      <Dialog 
+      <CustomDialog 
         open={open} 
         onClose={() => setOpen(false)} 
         maxWidth="md" 
-        fullWidth
-        PaperProps={{ sx: { borderRadius: 3 } }}
-      >
-        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'divider', pb: 2, pt: 3, px: 4 }}>
-          {selectedSurat?.judul}
-        </DialogTitle>
-        <DialogContent sx={{ p: 4 }}>
-          <Box sx={{ mt: 1 }}>
-            <Box sx={{ display: 'flex', gap: 1.5, mb: 3 }}>
-              <Chip label={selectedSurat?.kategori} variant="outlined" color="primary" sx={{ fontWeight: 'bold', borderWidth: 2 }} />
-              {selectedSurat?.prioritas === 'Penting' && (
-                <Chip label="Penting" color="error" sx={{ fontWeight: 'bold' }} />
-              )}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto', color: 'text.secondary', bgcolor: 'grey.100', px: 1.5, borderRadius: 2 }}>
-                <AccessTimeIcon sx={{ fontSize: 16 }} />
-                <Typography variant="caption" fontWeight="700">
-                  {selectedSurat?.tanggal}
-                </Typography>
-              </Box>
-            </Box>
-            
-            <Paper elevation={0} sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: 3, border: '1px solid', borderColor: 'grey.200', mb: 3 }}>
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8, color: 'text.primary', fontWeight: 500 }}>
-                {selectedSurat?.isi}
-              </Typography>
-            </Paper>
-
-            {selectedSurat?.lampiran && (
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle2" fontWeight="700" color="text.secondary" gutterBottom>
-                  Lampiran Dokumen
-                </Typography>
-                <Card elevation={0} sx={{ p: 2, bgcolor: 'primary.50', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2, border: '1px solid', borderColor: 'primary.200' }}>
-                  <Box sx={{ p: 1, bgcolor: 'primary.main', borderRadius: 1.5, color: 'white', display: 'flex' }}>
-                    <DescriptionIcon />
-                  </Box>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="body2" fontWeight="800" color="primary.900">
-                      {selectedSurat.lampiran}
-                    </Typography>
-                    <Typography variant="caption" color="primary.700" fontWeight="500">
-                      PDF Document (1.2 MB)
-                    </Typography>
-                  </Box>
-                  <Button variant="contained" size="small" startIcon={<DownloadIcon />} sx={{ borderRadius: 2, fontWeight: 600, px: 2, py: 1, boxShadow: 'none' }}>
-                    Download
-                  </Button>
-                </Card>
-              </Box>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1, px: 4 }}>
+        title={selectedSurat?.judul}
+        actions={
           <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Tutup</Button>
-        </DialogActions>
-      </Dialog>
+        }
+      >
+        <Box sx={{ display: 'flex', gap: 1.5, mb: 3 }}>
+          <Chip label={selectedSurat?.kategori} variant="outlined" color="primary" sx={{ fontWeight: 'bold', borderWidth: 2 }} />
+          {selectedSurat?.prioritas === 'Penting' && (
+            <Chip label="Penting" color="error" sx={{ fontWeight: 'bold' }} />
+          )}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto', color: 'text.secondary', bgcolor: 'grey.100', px: 1.5, borderRadius: 2 }}>
+            <AccessTimeIcon sx={{ fontSize: 16 }} />
+            <Typography variant="caption" fontWeight="700">
+              {selectedSurat?.tanggal}
+            </Typography>
+          </Box>
+        </Box>
+        
+        <Paper elevation={0} sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: 3, border: '1px solid', borderColor: 'grey.200', mb: 3 }}>
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8, color: 'text.primary', fontWeight: 500 }}>
+            {selectedSurat?.isi}
+          </Typography>
+        </Paper>
+
+        {selectedSurat?.lampiran && (
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="subtitle2" fontWeight="700" color="text.secondary" gutterBottom>
+              Lampiran Dokumen
+            </Typography>
+            <Card elevation={0} sx={{ p: 2, bgcolor: 'primary.50', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2, border: '1px solid', borderColor: 'primary.200' }}>
+              <Box sx={{ p: 1, bgcolor: 'primary.main', borderRadius: 1.5, color: 'white', display: 'flex' }}>
+                <DescriptionIcon />
+              </Box>
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography variant="body2" fontWeight="800" color="primary.900">
+                  {selectedSurat.lampiran}
+                </Typography>
+                <Typography variant="caption" color="primary.700" fontWeight="500">
+                  PDF Document (1.2 MB)
+                </Typography>
+              </Box>
+              <Button variant="contained" size="small" startIcon={<DownloadIcon />} sx={{ borderRadius: 2, fontWeight: 600, px: 2, py: 1, boxShadow: 'none' }}>
+                Download
+              </Button>
+            </Card>
+          </Box>
+        )}
+      </CustomDialog>
     </Box>
   )
 }

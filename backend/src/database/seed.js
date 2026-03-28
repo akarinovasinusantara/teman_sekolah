@@ -1,5 +1,5 @@
 import sequelize from '../config/database.js'
-import { User, Sekolah, Guru, MataPelajaran, Kelas } from '../models/index.js'
+import { User, Sekolah, Guru, MataPelajaran, Kelas, Siswa, Keuangan, PPDB } from '../models/index.js'
 
 /**
  * =============================================
@@ -199,23 +199,86 @@ const seedDatabase = async () => {
     // CREATE KELAS
     // ==========================================
 
-    /**
-     * Daftar kelas untuk 3 tingkat (X, XI, XII)
-     * Masing-masing 2 kelas paralel
-     */
     const kelasList = [
       { nama: 'X-A', tingkat: 10, tahun_ajaran: '2025/2026', kapasitas: 32 },
       { nama: 'X-B', tingkat: 10, tahun_ajaran: '2025/2026', kapasitas: 32 },
-      { nama: 'XI-A', tingkat: 11, tahun_ajaran: '2025/2026', kapasitas: 32 },
-      { nama: 'XI-B', tingkat: 11, tahun_ajaran: '2025/2026', kapasitas: 32 },
-      { nama: 'XII-A', tingkat: 12, tahun_ajaran: '2025/2026', kapasitas: 32 },
-      { nama: 'XII-B', tingkat: 12, tahun_ajaran: '2025/2026', kapasitas: 32 }
+      { id: '11a', nama: 'XI-A', tingkat: 11, tahun_ajaran: '2025/2026', kapasitas: 32 },
+      { id: '11b', nama: 'XI-B', tingkat: 11, tahun_ajaran: '2025/2026', kapasitas: 32 },
+      { id: '12a', nama: 'XII-A', tingkat: 12, tahun_ajaran: '2025/2026', kapasitas: 32 },
+      { id: '12b', nama: 'XII-B', tingkat: 12, tahun_ajaran: '2025/2026', kapasitas: 32 }
     ]
 
+    const kelasMap = {}
     for (const kelas of kelasList) {
-      await Kelas.create(kelas)
+      const k = await Kelas.create(kelas)
+      kelasMap[kelas.nama] = k.id
     }
     console.log('✅ Kelas dibuat')
+
+    // ==========================================
+    // CREATE SISWA
+    // ==========================================
+
+    const siswaData = [
+      { nis: '12345', nama_lengkap: 'Ahmad Rizky', kelas_id: kelasMap['X-A'], tahun_masuk: 2025, status: 'Aktif' },
+      { nis: '12346', nama_lengkap: 'Siti Nurhaliza', kelas_id: kelasMap['X-B'], tahun_masuk: 2025, status: 'Aktif' },
+      { nis: '12347', nama_lengkap: 'Budi Pratama', kelas_id: kelasMap['XI-A'], tahun_masuk: 2024, status: 'Aktif' },
+      { nis: '12348', nama_lengkap: 'Dewi Lestari', kelas_id: kelasMap['XI-B'], tahun_masuk: 2024, status: 'Aktif' },
+      { nis: '12349', nama_lengkap: 'Fatimah Azzahra', kelas_id: kelasMap['XII-A'], tahun_masuk: 2023, status: 'Aktif' }
+    ]
+
+    const createdSiswa = []
+    for (const s of siswaData) {
+      const siswa = await Siswa.create(s)
+      createdSiswa.push(siswa)
+    }
+    console.log('✅ Data Siswa dibuat')
+
+    // ==========================================
+    // CREATE PPDB DATA
+    // ==========================================
+
+    const ppdbData = [
+      { no_pendaftaran: 'PPDB2026001', nama_lengkap: 'Rizwan Hakim', asal_sekolah: 'SMP N 1 Depok', status: 'Baru', tanggal_daftar: '2026-03-01' },
+      { no_pendaftaran: 'PPDB2026002', nama_lengkap: 'Laila Sari', asal_sekolah: 'SMP Al-Azhar', status: 'Baru', tanggal_daftar: '2026-03-02' },
+      { no_pendaftaran: 'PPDB2026003', nama_lengkap: 'Fadil Jaidi', asal_sekolah: 'SMP N 4 Jakarta', status: 'Proses', tanggal_daftar: '2026-03-03' },
+      { no_pendaftaran: 'PPDB2026004', nama_lengkap: 'Tasya Farasya', asal_sekolah: 'SMP Global', status: 'Proses', tanggal_daftar: '2026-03-04' },
+      { no_pendaftaran: 'PPDB2026005', nama_lengkap: 'Keanu Angelo', asal_sekolah: 'SMP N 2 Bogor', status: 'Diterima', tanggal_daftar: '2026-03-05' },
+      { no_pendaftaran: 'PPDB2026006', nama_lengkap: 'Dara Arafah', asal_sekolah: 'SMP N 8 Jakarta', status: 'Diterima', tanggal_daftar: '2026-03-06' },
+      { no_pendaftaran: 'PPDB2026007', nama_lengkap: 'Gading Marten', asal_sekolah: 'SMP N 1 Bandung', status: 'Ditolak', tanggal_daftar: '2026-03-07' },
+      { no_pendaftaran: 'PPDB2026008', nama_lengkap: 'Raffi Ahmad', asal_sekolah: 'SMP N 5 Tangerang', status: 'Ditolak', tanggal_daftar: '2026-03-08' }
+    ]
+
+    for (const p of ppdbData) {
+      await PPDB.create(p)
+    }
+    console.log('✅ Data PPDB dibuat')
+
+    // ==========================================
+    // CREATE KEUANGAN (SPP) DATA
+    // ==========================================
+
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ]
+    const year = 2026
+
+    for (const siswa of createdSiswa) {
+      for (let i = 0; i < 3; i++) { // Seed for Jan, Feb, Mar 2026
+        await Keuangan.create({
+          siswa_id: siswa.id,
+          jenis: 'SPP',
+          jumlah: 500000,
+          bulan: months[i],
+          tahun: year,
+          status: i < 2 ? 'Lunas' : 'Belum_Bayar', // Jan, Feb Lunas, Mar Belum Bayar
+          tanggal_bayar: i < 2 ? `2026-0${i+1}-10` : null,
+          diverifikasi_oleh: tuUser.id
+        })
+      }
+    }
+    console.log('✅ Data Keuangan dibuat')
 
     // ==========================================
     // SUMMARY

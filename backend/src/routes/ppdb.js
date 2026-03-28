@@ -1,6 +1,8 @@
 import express from 'express'
 import { PPDB, User } from '../models/index.js'
 import { protect, authorize } from '../middleware/auth.js'
+import { Op } from 'sequelize'
+import sequelize from '../config/database.js'
 
 const router = express.Router()
 
@@ -38,6 +40,58 @@ const router = express.Router()
  * - status: Filter berdasarkan status (Baru, Proses, Diterima, Ditolak)
  * - tahun: Filter berdasarkan tahun
  */
+/**
+ * @route   GET /api/ppdb/stats
+ * @desc    Statistik PPDB untuk dashboard: distribusi status & pendaftar per bulan
+ * @access  Private (Super Admin dan TU only)
+ */
+router.get('/stats', protect, authorize('super_admin', 'tu'), async (req, res) => {
+  try {
+    // 1. Distribusi per status
+    const statuses = ['Baru', 'Proses', 'Diterima', 'Ditolak']
+    const statusCounts = await Promise.all(
+      statuses.map(async (s) => ({
+        status: s,
+        jumlah: await PPDB.count({ where: { status: s } })
+      }))
+    )
+
+    // 2. Pendaftar per bulan (6 bulan terakhir)
+    const now = new Date()
+    const months = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      months.push({
+        year: d.getFullYear(),
+        month: d.getMonth() + 1,
+        label: d.toLocaleString('id-ID', { month: 'short', year: '2-digit' })
+      })
+    }
+
+    const monthlyData = await Promise.all(
+      months.map(async ({ year, month, label }) => {
+        const start = new Date(year, month - 1, 1)
+        const end = new Date(year, month, 0, 23, 59, 59)
+        const jumlah = await PPDB.count({
+          where: { tanggal_daftar: { [Op.between]: [start, end] } }
+        })
+        return { label, jumlah }
+      })
+    )
+
+    res.json({
+      success: true,
+      data: {
+        byStatus: statusCounts,
+        byMonth: monthlyData,
+        total: await PPDB.count()
+      }
+    })
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message })
+  }
+})
+
 router.get('/', protect, authorize('super_admin', 'tu'), async (req, res) => {
   try {
     const { status, tahun } = req.query

@@ -9,10 +9,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import CustomDialog from '../../../components/common/CustomDialog'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
@@ -154,53 +151,45 @@ export default function JadwalPelajaran() {
       </Paper>
 
       {/* Dialog Modal */}
-      <Dialog 
-        open={open} 
-        onClose={() => setOpen(false)} 
-        maxWidth="sm" 
-        fullWidth
-        fullScreen={isMobile}
-        PaperProps={{ sx: { borderRadius: isMobile ? 0 : 3 } }}
+      <CustomDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
+        title="Tambah Jadwal Baru"
+        actions={
+          <>
+            <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batalkan</Button>
+            <Button variant="contained" sx={{ fontWeight: 600, px: 3, borderRadius: 2 }}>Simpan Jadwal</Button>
+          </>
+        }
       >
-        <DialogTitle sx={{ fontWeight: '800', borderBottom: '1px solid', borderColor: 'divider', pb: 2, pt: 3, px: 4 }}>
-          Tambah Jadwal Baru
-          <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', right: 16, top: 16 }}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ p: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
-            <TextField fullWidth select SelectProps={{ native: true }} label="Target Kelas" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
-              <option value="">Pilih...</option>
-              <option value="X-A">X-A</option>
-              <option value="X-B">X-B</option>
-            </TextField>
-            <TextField fullWidth select SelectProps={{ native: true }} label="Hari Pembelajaran" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
-              <option value="">Pilih...</option>
-              <option value="Senin">Senin</option>
-              <option value="Selasa">Selasa</option>
-            </TextField>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <TextField fullWidth label="Jam Mulai" type="time" InputLabelProps={{ shrink: true }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-              <TextField fullWidth label="Jam Selesai" type="time" InputLabelProps={{ shrink: true }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            </Box>
-            <TextField fullWidth select SelectProps={{ native: true }} label="Mata Pelajaran" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
-              <option value="">Pilih...</option>
-              <option value="Matematika">Matematika</option>
-              <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-            </TextField>
-            <TextField fullWidth select SelectProps={{ native: true }} label="Guru Pengampu" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
-              <option value="">Pilih...</option>
-              <option value="Dra. Siti Aminah, M.Pd">Dra. Siti Aminah, M.Pd</option>
-              <option value="Budi Santoso, S.Pd">Budi Santoso, S.Pd</option>
-            </TextField>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TextField fullWidth select SelectProps={{ native: true }} label="Target Kelas" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
+            <option value="">Pilih...</option>
+            <option value="X-A">X-A</option>
+            <option value="X-B">X-B</option>
+          </TextField>
+          <TextField fullWidth select SelectProps={{ native: true }} label="Hari Pembelajaran" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
+            <option value="">Pilih...</option>
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+          </TextField>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField fullWidth label="Jam Mulai" type="time" InputLabelProps={{ shrink: true }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+            <TextField fullWidth label="Jam Selesai" type="time" InputLabelProps={{ shrink: true }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
           </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1, px: 4 }}>
-          <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batalkan</Button>
-          <Button variant="contained" sx={{ fontWeight: 600, px: 3, borderRadius: 2 }}>Simpan Jadwal</Button>
-        </DialogActions>
-      </Dialog>
+          <TextField fullWidth select SelectProps={{ native: true }} label="Mata Pelajaran" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
+            <option value="">Pilih...</option>
+            <option value="Matematika">Matematika</option>
+            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+          </TextField>
+          <TextField fullWidth select SelectProps={{ native: true }} label="Guru Pengampu" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
+            <option value="">Pilih...</option>
+            <option value="Dra. Siti Aminah, M.Pd">Dra. Siti Aminah, M.Pd</option>
+            <option value="Budi Santoso, S.Pd">Budi Santoso, S.Pd</option>
+          </TextField>
+        </Box>
+      </CustomDialog>
     </Box>
   )
 }

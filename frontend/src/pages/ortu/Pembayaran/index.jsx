@@ -12,10 +12,7 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import CustomDialog from '../../../components/common/CustomDialog'
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import Alert from '@mui/material/Alert'
@@ -227,51 +224,45 @@ export default function Pembayaran() {
       </Paper>
 
       {/* Payment Dialog */}
-      <Dialog 
+      <CustomDialog 
         open={open} 
         onClose={() => setOpen(false)} 
         maxWidth="sm" 
-        fullWidth
-        PaperProps={{ sx: { borderRadius: 3 } }}
+        title={`Pembayaran - ${selectedTagihan?.bulan}`}
+        actions={
+          <>
+            <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batal</Button>
+            <Button variant="contained" color="primary" onClick={handleBayar} sx={{ borderRadius: 2, fontWeight: 600, px: 3 }}>
+              Saya Sudah Bayar
+            </Button>
+          </>
+        }
       >
-        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'divider', pb: 2 }}>
-          Pembayaran - {selectedTagihan?.bulan}
-        </DialogTitle>
-        <DialogContent sx={{ p: 4 }}>
-          <Box sx={{ mt: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Box>
-                <Typography variant="body2" color="text.secondary">Jenis Tagihan</Typography>
-                <Typography variant="h6" fontWeight="700">{selectedTagihan?.jenis}</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'right' }}>
-                <Typography variant="body2" color="text.secondary">Jumlah Tagihan</Typography>
-                <Typography variant="h4" color="primary.main" fontWeight="800">{selectedTagihan?.jumlah}</Typography>
-              </Box>
-            </Box>
-            
-            <Box sx={{ p: 4, bgcolor: 'grey.50', borderRadius: 3, textAlign: 'center', my: 2, border: '1px dashed', borderColor: 'grey.300' }}>
-              <QrCodeIcon sx={{ fontSize: 180, color: 'text.primary', mb: 1 }} />
-              <Typography variant="body1" fontWeight="700" sx={{ mt: 1 }}>
-                Scan QRIS untuk pembayaran
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                Support: GoPay, OVO, Dana, ShopeePay, Mobile Banking
-              </Typography>
-            </Box>
-
-            <Alert severity="info" sx={{ borderRadius: 2, '& .MuiAlert-message': { fontWeight: 500 } }}>
-              Setelah melakukan pembayaran, sistem akan otomatis memverifikasi. Bukti pembayaran akan dikirim ke email terdaftar.
-            </Alert>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+          <Box>
+            <Typography variant="body2" color="text.secondary">Jenis Tagihan</Typography>
+            <Typography variant="h6" fontWeight="700">{selectedTagihan?.jenis}</Typography>
           </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batal</Button>
-          <Button variant="contained" color="primary" onClick={handleBayar} sx={{ borderRadius: 2, fontWeight: 600, px: 3 }}>
-            Saya Sudah Bayar
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography variant="body2" color="text.secondary">Jumlah Tagihan</Typography>
+            <Typography variant="h4" color="primary.main" fontWeight="800">{selectedTagihan?.jumlah}</Typography>
+          </Box>
+        </Box>
+        
+        <Box sx={{ p: 4, bgcolor: 'grey.50', borderRadius: 3, textAlign: 'center', my: 2, border: '1px dashed', borderColor: 'grey.300' }}>
+          <QrCodeIcon sx={{ fontSize: 180, color: 'text.primary', mb: 1 }} />
+          <Typography variant="body1" fontWeight="700" sx={{ mt: 1 }}>
+            Scan QRIS untuk pembayaran
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            Support: GoPay, OVO, Dana, ShopeePay, Mobile Banking
+          </Typography>
+        </Box>
+
+        <Alert severity="info" sx={{ borderRadius: 2, '& .MuiAlert-message': { fontWeight: 500 } }}>
+          Setelah melakukan pembayaran, sistem akan otomatis memverifikasi. Bukti pembayaran akan dikirim ke email terdaftar.
+        </Alert>
+      </CustomDialog>
     </Box>
   )
 }

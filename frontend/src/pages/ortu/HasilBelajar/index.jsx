@@ -16,10 +16,7 @@ import Tabs from '@mui/material/Tabs'
 import IconButton from '@mui/material/IconButton'
 import DownloadIcon from '@mui/icons-material/Download'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import CustomDialog from '../../../components/common/CustomDialog'
 import Button from '@mui/material/Button'
 
 // New Icons
@@ -308,54 +305,48 @@ export default function HasilBelajar() {
       </Paper>
 
       {/* Rapor Preview Dialog */}
-      <Dialog 
+      <CustomDialog 
         open={openRapor} 
         onClose={() => setOpenRapor(false)} 
         maxWidth="md" 
-        fullWidth
-        PaperProps={{
-          sx: { borderRadius: 3 }
-        }}
+        title="Preview Rapor - Ganjil 2025/2026"
+        actions={
+          <>
+            <Button onClick={() => setOpenRapor(false)} sx={{ fontWeight: 600 }}>Tutup</Button>
+            <Button variant="contained" startIcon={<DownloadIcon />} sx={{ borderRadius: 2, fontWeight: 600 }}>
+              Download PDF
+            </Button>
+          </>
+        }
       >
-        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'divider', pb: 2 }}>
-          Preview Rapor - Ganjil 2025/2026
-        </DialogTitle>
-        <DialogContent sx={{ p: 4 }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography variant="h5" fontWeight="800" sx={{ mb: 1 }}>
-              RAPOR PESERTA DIDIK
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              SMA NEGERI 1 JAKARTA
-            </Typography>
-          </Box>
-          <Grid container spacing={2} sx={{ mb: 4, bgcolor: 'grey.50', p: 3, borderRadius: 2 }}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="body2" color="text.secondary">Nama Siswa</Typography>
-              <Typography variant="body1" fontWeight="600">Ahmad Rizky</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-               <Typography variant="body2" color="text.secondary">NIS</Typography>
-               <Typography variant="body1" fontWeight="600">12345</Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-               <Typography variant="body2" color="text.secondary">Kelas</Typography>
-               <Typography variant="body1" fontWeight="600">X-A</Typography>
-            </Grid>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography variant="h5" fontWeight="800" sx={{ mb: 1 }}>
+            RAPOR PESERTA DIDIK
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            SMA NEGERI 1 JAKARTA
+          </Typography>
+        </Box>
+        <Grid container spacing={2} sx={{ mb: 4, bgcolor: 'grey.50', p: 3, borderRadius: 2 }}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" color="text.secondary">Nama Siswa</Typography>
+            <Typography variant="body1" fontWeight="600">Ahmad Rizky</Typography>
           </Grid>
-          <Paper sx={{ p: 6, bgcolor: 'grey.100', borderRadius: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200, border: '1px dashed', borderColor: 'grey.400' }}>
-            <Typography variant="body1" color="text.secondary" fontWeight="500">
-              [Preview Rapor Lengkap Akan Ditampilkan Di Sini]
-            </Typography>
-          </Paper>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1 }}>
-          <Button onClick={() => setOpenRapor(false)} sx={{ fontWeight: 600 }}>Tutup</Button>
-          <Button variant="contained" startIcon={<DownloadIcon />} sx={{ borderRadius: 2, fontWeight: 600 }}>
-            Download PDF
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" color="text.secondary">NIS</Typography>
+            <Typography variant="body1" fontWeight="600">12345</Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" color="text.secondary">Kelas</Typography>
+            <Typography variant="body1" fontWeight="600">X-A</Typography>
+          </Grid>
+        </Grid>
+        <Paper sx={{ p: 6, bgcolor: 'grey.100', borderRadius: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200, border: '1px dashed', borderColor: 'grey.400' }}>
+          <Typography variant="body1" color="text.secondary" fontWeight="500">
+            [Preview Rapor Lengkap Akan Ditampilkan Di Sini]
+          </Typography>
+        </Paper>
+      </CustomDialog>
     </Box>
   )
 }

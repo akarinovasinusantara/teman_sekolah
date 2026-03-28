@@ -1,8 +1,48 @@
 import express from 'express'
 import { Keuangan, Siswa, User } from '../models/index.js'
 import { protect, authorize } from '../middleware/auth.js'
+import { Op } from 'sequelize'
 
 const router = express.Router()
+
+/**
+ * @route   GET /api/keuangan/stats/monthly
+ * @desc    Realisasi keuangan SPP per bulan (12 bulan terakhir): Lunas vs Belum_Bayar
+ * @access  Private (Super Admin dan TU only)
+ */
+router.get('/stats/monthly', protect, authorize('super_admin', 'tu'), async (req, res) => {
+  try {
+    const now = new Date()
+    const months = []
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const year = d.getFullYear()
+      const month = d.getMonth() + 1
+      const label = d.toLocaleString('id-ID', { month: 'short', year: '2-digit' })
+      const start = new Date(year, month - 1, 1)
+      const end = new Date(year, month, 0, 23, 59, 59)
+
+      const [lunas, belumBayar] = await Promise.all([
+        Keuangan.sum('jumlah', {
+          where: { status: 'Lunas', jenis: 'SPP', tanggal_bayar: { [Op.between]: [start, end] } }
+        }),
+        Keuangan.sum('jumlah', {
+          where: { status: 'Belum_Bayar', jenis: 'SPP', createdAt: { [Op.between]: [start, end] } }
+        })
+      ])
+
+      months.push({
+        label,
+        lunas: lunas || 0,
+        belum_bayar: belumBayar || 0
+      })
+    }
+
+    res.json({ success: true, data: months })
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message })
+  }
+})
 
 /**
  * =============================================

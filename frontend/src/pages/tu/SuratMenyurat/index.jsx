@@ -4,10 +4,7 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import CustomDialog from '../../../components/common/CustomDialog'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import PrintIcon from '@mui/icons-material/Print'
@@ -131,41 +128,37 @@ export default function SuratMenyurat() {
       </Grid>
 
       {/* Dialog Cetak */}
-      <Dialog 
-        open={open} 
-        onClose={() => setOpen(false)} 
-        maxWidth="md" 
-        fullWidth
-        fullScreen={isMobile}
-        PaperProps={{ sx: { borderRadius: isMobile ? 0 : 3 } }}
-      >
-        <DialogTitle sx={{ fontWeight: '800', borderBottom: '1px solid', borderColor: 'divider', pb: 2, pt: 3, px: 4, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <DescriptionIcon color="primary" /> {selectedSurat?.nama}
-          <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', right: 16, top: 16 }}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ p: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
-            <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-               <TextField fullWidth label="Nomor Referensi Surat" placeholder="Contoh: 001/SK/III/2026" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-               <TextField fullWidth label="Tanggal Diterbitkan" type="date" InputLabelProps={{ shrink: true }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            </Box>
-            <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-              <TextField fullWidth label="Nama Lengkap Siswa" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-              <TextField fullWidth label="NIS / NISN" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            </Box>
-             <TextField fullWidth label="Kelas & Jurusan" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            <TextField fullWidth label="Deskripsi Keperluan Singkat" multiline rows={3} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+      <CustomDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="md"
+        title={
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <DescriptionIcon color="primary" /> {selectedSurat?.nama}
           </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1, px: 4, bgcolor: '#f8fafc', borderTop: '1px solid', borderColor: 'divider' }}>
-          <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batalkan</Button>
-          <Button variant="contained" startIcon={<PrintIcon />} sx={{ fontWeight: 600, px: 3, borderRadius: 2 }}>
-            Cetak Dokumen PDF
-          </Button>
-        </DialogActions>
-      </Dialog>
+        }
+        actions={
+          <>
+            <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batalkan</Button>
+            <Button variant="contained" startIcon={<PrintIcon />} sx={{ fontWeight: 600, px: 3, borderRadius: 2 }}>
+              Cetak Dokumen PDF
+            </Button>
+          </>
+        }
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
+             <TextField fullWidth label="Nomor Referensi Surat" placeholder="Contoh: 001/SK/III/2026" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+             <TextField fullWidth label="Tanggal Diterbitkan" type="date" InputLabelProps={{ shrink: true }} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+          </Box>
+          <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
+            <TextField fullWidth label="Nama Lengkap Siswa" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+            <TextField fullWidth label="NIS / NISN" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+          </Box>
+           <TextField fullWidth label="Kelas & Jurusan" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+          <TextField fullWidth label="Deskripsi Keperluan Singkat" multiline rows={3} sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+        </Box>
+      </CustomDialog>
     </Box>
   )
 }

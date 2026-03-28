@@ -21,10 +21,7 @@ import { useTheme } from '@mui/material/styles'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Divider from '@mui/material/Divider'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
+import CustomDialog from '../../../components/common/CustomDialog'
 import DomainIcon from '@mui/icons-material/Domain'
 
 const dummySekolah = [
@@ -179,32 +176,30 @@ export default function ManajemenSekolah() {
         </Box>
       )}
 
-      {/* Dialog */}
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth fullScreen={isMobile} PaperProps={{ sx: { borderRadius: isMobile ? 0 : 3 } }}>
-        <DialogTitle sx={{ fontWeight: '800', borderBottom: '1px solid', borderColor: 'divider', pb: 2, pt: 3, px: 4, bgcolor: '#0F172A', color: 'white' }}>
-          Integrasi Data Sekolah Baru
-          <IconButton onClick={() => setOpen(false)} sx={{ position: 'absolute', right: 16, top: 16, color: 'white' }}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ p: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
-            <TextField fullWidth label="Nama Instansi Sekolah Resmi" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            <TextField fullWidth label="Nomor Pokok Sekolah Nasional (NPSN)" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            <TextField fullWidth label="Alamat Operasional/Jalan" multiline rows={3} required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
-            <TextField fullWidth select SelectProps={{ native: true }} label="Status Database" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
-              <option value="Aktif">Sekolah Aktif (Termonitor)</option>
-              <option value="Non-Aktif">Non-Aktif/Suspended</option>
-            </TextField>
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 3, pt: 1, px: 4, bgcolor: '#f8fafc', borderTop: '1px solid', borderColor: 'divider' }}>
-          <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600, color: '#475569' }}>Batalkan</Button>
-          <Button variant="contained" sx={{ fontWeight: 600, px: 3, borderRadius: 2, bgcolor: '#0F172A', '&:hover': { bgcolor: '#1E293B' } }}>
-            Simpan Konfigurasi
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <CustomDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
+        title="Integrasi Data Sekolah Baru"
+        actions={
+          <>
+            <Button onClick={() => setOpen(false)} sx={{ fontWeight: 600 }}>Batalkan</Button>
+            <Button variant="contained" sx={{ fontWeight: 600, px: 3, borderRadius: 2 }}>
+              Simpan Konfigurasi
+            </Button>
+          </>
+        }
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TextField fullWidth label="Nama Instansi Sekolah Resmi" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+          <TextField fullWidth label="Nomor Pokok Sekolah Nasional (NPSN)" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+          <TextField fullWidth label="Alamat Operasional/Jalan" multiline rows={3} required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+          <TextField fullWidth select SelectProps={{ native: true }} label="Status Database" required sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}>
+            <option value="Aktif">Sekolah Aktif (Termonitor)</option>
+            <option value="Non-Aktif">Non-Aktif/Suspended</option>
+          </TextField>
+        </Box>
+      </CustomDialog>
     </Box>
   )
 }
